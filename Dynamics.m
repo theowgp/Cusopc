@@ -34,7 +34,7 @@ classdef Dynamics
         
         
         
-        function res = fx(obj, x, v)
+        function res = fx(obj, v)
             res = v;
         end
         
@@ -60,13 +60,49 @@ classdef Dynamics
         
     
         function res = f(obj, x, v)
-            res = [obj.fx(x, v); obj.fv(x, v)];
+            res = [obj.fx(v); obj.fv(x, v)];
         end
         
         
-        function res = fz(obj, x, v)
+        function res = fz(obj, v)
             res = B(v, v, obj.N);
         end
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        function res = dfvdv(obj, x, u, k, i)
+            tempm1 = zeros(obj.d, obj.d);
+            tempm2 = zeros(obj.d, obj.d);
+            
+            for j = 1:obj.N
+                aij = obj.a(x, i, j);
+                tempm1 = tempm1+    aij * obj.dtemp(k, i, j);
+                tempm2 = tempm2+    aij * (- obj.dtemp(k, i, j));                           
+            end
+            % in this loop I multiply control component corresponding to the term tempm2 component 
+            for s = 1:obj.d
+                tempm2(s, :) = tempm2(s, :) * u(i, s); 
+            end
+            res = 2*tempm1 + tempm2;
+        end
+        
+        
+        
+        
         
         
         
@@ -86,11 +122,11 @@ classdef Dynamics
         end
         
         function res = dtemp(obj, k, i, j)
-            if k == i
-                res = - eye(obj.d);
+            if k == j
+                res =  eye(obj.d);
             else
-                if k == j
-                    res = eye(obj.d);
+                if k == i
+                    res = - eye(obj.d);
                 else
                     res = zeros(obj.d);
                 end
@@ -131,6 +167,8 @@ classdef Dynamics
         function res = dcutoffdx(obj, x, k, i, j)
             res = obj.dcutoff(norm(x(i, :) - x(j, :))) * obj.dnorm(obj, x, k, i, j);
         end
+        
+        
         
         
         

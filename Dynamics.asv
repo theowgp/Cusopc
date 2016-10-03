@@ -70,6 +70,31 @@ classdef Dynamics
         
         
         
+        
+        
+        
+        function res = dfvdv(obj, x, v, k, i)
+            tempm1 = zeros(obj.d, obj.d);
+            tempm2 = zeros(obj.d, obj.d);
+            
+            for j = 1:obj.N
+                aij = obj.a(x, i, j);
+                tempm1 = tempm1+    aij * obj.dtemp(k, i, j);
+                tempm2 = tempm2+    aij * (- obj.dtemp(k, i, j));                           
+            end
+            % in this loop I multiply control component corresponding to the term tempm2 component 
+            for s=1:obj.d
+                tempm2(s, :) = tempm2(s, :) * u(i, s); 
+            end
+            res = 2*tempm1 + tempm2;
+        end
+        
+        
+        
+        
+        
+        
+        
         function res = dfvdx(obj, x, v, u, k, i)
             tempm1 = zeros(obj.d, obj.d);
             tempm2 = zeros(obj.d, obj.d);
@@ -78,17 +103,19 @@ classdef Dynamics
                 tempm1 = tempm1+    (v(j, :) - v(i, :))' * obj.dadx(x, k, i, j);
                 tempm2 = tempm2+    (v(i, :) - v(j, :) + x(j, :) - x(i, :))' * obj.dadx(x, k, i, j) + obj.dtemp(k, i, j) * obj.cutoff(norm(x(i, :) - x(j, :)));                           
             end
+            % in this loop I multiply control component corresponding to the term tempm2 component 
             for s=1:obj.d
                 tempm2(s, :) = tempm2(s, :) * u(i, s); 
             end
             res = 2*tempm1 + tempm2;    
         end
+        
         function res = dtemp(obj, k, i, j)
-            if k == i
-                res = - eye(obj.d);
+            if k == j
+                res =  eye(obj.d);
             else
-                if k == j
-                    res = eye(obj.d);
+                if k == i
+                    res = - eye(obj.d);
                 else
                     res = zeros(obj.d);
                 end
@@ -107,12 +134,14 @@ classdef Dynamics
             res = obj.dcutoffdx(x, k, i, j) * temps - obj.cutoff(norm(x(i, :) - x(j, :))) * tempv;
             res = res / temps^2;
         end
+        
         function res = dcutoff(obj, r)
             res = 0;
             if r < obj.R
                 res = -2 * r * obj.R^2 * exp(-obj.R^2/(obj.R^2-r^2)) / (obj.R^2-r^2)^2;
             end
         end
+        
         function res = dnorm(obj, x, k, i, j)
             res = zeros(1, obj.d);
             if k == i
@@ -123,9 +152,12 @@ classdef Dynamics
                 end
             end
         end
+        
         function res = dcutoffdx(obj, x, k, i, j)
             res = obj.dcutoff(norm(x(i, :) - x(j, :))) * obj.dnorm(obj, x, k, i, j);
         end
+        
+        
         
         
         
