@@ -76,11 +76,11 @@ classdef Dynamics
         
         %coefficients aij in the system
         function res = a(obj, x, i,  j)
-            res = obj.cutoff(norm(x(i, :) - x(j, :)));
+            res = cutoff(norm(x(i, :) - x(j, :)));
             
             temp = 0;
             for s = 1:obj.N
-                temp = temp+     obj.cutoff(norm(x(i, :) - x(s, :)));
+                temp = temp+     cutoff(norm(x(i, :) - x(s, :)));
             end
             
             res = res / temp;
