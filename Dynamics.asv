@@ -34,7 +34,7 @@ classdef Dynamics
         
         
         
-        function res = fx(obj, x, v)
+        function res = fx(obj, v)
             res = v;
         end
         
@@ -60,11 +60,11 @@ classdef Dynamics
         
     
         function res = f(obj, x, v)
-            res = [obj.fx(x, v); obj.fv(x, v)];
+            res = [obj.fx(v); obj.fv(x, v)];
         end
         
         
-        function res = fz(obj, x, v)
+        function res = fz(obj, v)
             res = B(v, v, obj.N);
         end
         
@@ -73,7 +73,35 @@ classdef Dynamics
         
         
         
-        function res = dfvdv(obj, x, v, k, i)
+        function res = dfvdu(obj, x, v, k, i)
+            res = zeros(obj.d);
+            if k == i
+                temp = 
+            end
+        end
+        
+        
+        
+        
+        
+        function res = dfzdv(obj, v, k)
+            temp = zeros(obj.N, obj.d);
+            
+            for i = 1:obj.N
+                temp = temp+    norm(v(k, :) - v(i, :)) * (v(k, :) - v(i, :));
+            end
+            
+            res = 2*temp/obj.N^2;
+        end
+        
+        
+        
+        
+        
+        
+        
+        
+        function res = dfvdv(obj, x, u, k, i)
             tempm1 = zeros(obj.d, obj.d);
             tempm2 = zeros(obj.d, obj.d);
             
@@ -83,7 +111,7 @@ classdef Dynamics
                 tempm2 = tempm2+    aij * (- obj.dtemp(k, i, j));                           
             end
             % in this loop I multiply control component corresponding to the term tempm2 component 
-            for s=1:obj.d
+            for s = 1:obj.d
                 tempm2(s, :) = tempm2(s, :) * u(i, s); 
             end
             res = 2*tempm1 + tempm2;

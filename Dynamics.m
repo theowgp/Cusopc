@@ -73,6 +73,20 @@ classdef Dynamics
         
         
         
+        function res = dfvdu(obj, x, v, k, i)
+            res = zeros(obj.d);
+            if k == i
+                temp = zeros(1, obj.d);
+                for j = 1:obj.N
+                    temp = temp+    obj.cutoff(norm(x(k, :) - x(j, :))) * (v(k, :) - v(j, :) + x(j, :) - x(k, :));
+                end
+                res = diag(temp);
+            end
+        end
+        
+        
+        
+        
         
         function res = dfzdv(obj, v, k)
             temp = zeros(obj.N, obj.d);
