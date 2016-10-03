@@ -88,8 +88,58 @@ classdef Dynamics
         
         
         
+        
+        
+        
+        
+        function res = GF(obj, x, v, u)
+            N = obj.N;
+            d = obj.d;
+            
+            temp = zeros(N*d);
+            
+            res = zeros(2*N*d + 1);
+            
+            %dfxdv
+            res(1:N*d,    N*d+1:2*N*d) = eye(N*d);
+                                   
+            %dfvdx
+            for i = 1:N
+                for k=1:N
+                    temp((i-1)*d+1:i*d, (k-1)*d+1:k*d) = obj.dfvdx(x, v, u, k, i); 
+                end
+            end
+            res(N*d+1:2*N*d, 1:N*d) = temp;
+            
+            %dfvdv
+            for i = 1:N
+                for k=1:N
+                    temp((i-1)*d+1:i*d, (k-1)*d+1:k*d) = obj.dfvdv(x, u, k, i);
+                end
+            end
+            res(N*d+1:2*N*d, N*d+1:2*N*d) = temp;
+            
+            %dfzdv
+            temp = zeros(1, N*d);
+            for k = 1:N
+                temp((k-1)*d+1:k*d) = obj.dfzdv(v, k); 
+            end
+            res(2*N*d+1, N*d+1:2*N*d) = temp;
+        end
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
         function res = dfzdv(obj, v, k)
-            temp = zeros(obj.N, obj.d);
+            temp = zeros(1, obj.d);
             
             for i = 1:obj.N
                 temp = temp+    norm(v(k, :) - v(i, :)) * (v(k, :) - v(i, :));
@@ -97,8 +147,6 @@ classdef Dynamics
             
             res = 2*temp/obj.N^2;
         end
-        
-        
         
         
         
@@ -176,17 +224,19 @@ classdef Dynamics
         
         function res = dnorm(obj, x, k, i, j)
             res = zeros(1, obj.d);
-            if k == i
-                res = x(k, :)/norm(x(k, :) - x(j, :));
-            else
-                if k == j
-                    res = -x(k, :)/norm(x(i, :) - x(k, :));
+            if i ~= j
+                if k == i
+                    res = x(k, :)/norm(x(k, :) - x(j, :));
+                else
+                    if k == j
+                        res = -x(k, :)/norm(x(i, :) - x(k, :));
+                    end
                 end
             end
         end
         
         function res = dcutoffdx(obj, x, k, i, j)
-            res = obj.dcutoff(norm(x(i, :) - x(j, :))) * obj.dnorm(obj, x, k, i, j);
+            res = obj.dcutoff(norm(x(i, :) - x(j, :))) * obj.dnorm(x, k, i, j);
         end
         
         
