@@ -74,8 +74,15 @@ classdef Dynamics
         
         
         
-        
-        
+        function res = dfzdv(obj, v, k)
+            temp = zeros(obj.N, obj.d);
+            
+            for i = 1:obj.N
+                temp = temp+    norm(v(k, :) - v(i, :)) * (v(k, :) - v(i, :));
+            end
+            
+            res = 2*temp/obj.N^2;
+        end
         
         
         
