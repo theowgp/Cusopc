@@ -95,7 +95,7 @@ classdef Dynamics
         function res = F(obj, argx, argu)
             [x, v, z, u] = obj.convert(argx, argu);
             
-            res = [reshape(obj.fx(v)', [obj.N*obj.d, 1]);    reshape(obj.fv(x, v, u)', [obj.N*obj.d, 1]);     z];
+            res = [reshape(obj.fx(v)', [obj.N*obj.d, 1]);    reshape(obj.fv(x, v, u)', [obj.N*obj.d, 1]);     obj.fz(v)];
         end
         
         

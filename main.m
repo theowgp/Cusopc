@@ -31,7 +31,7 @@ u0 = ones(N, d);
 %% CREATE THE DYNAMICS
 gamma = 1;
 delta = 1;
-R = 4;
+R = 40;
 dynamics = Dynamics(N, d, gamma, delta, R);
 
 
