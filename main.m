@@ -15,13 +15,13 @@ mesh = Mesh(T, n);
 
 %% INITIAL CONDITIONS
 % initial positions
-x0 = initx(N, d, N);
+x0 = initx(N, d, 3);
 
 % initial velocities
-v0 = initv(N, d, 2);
+v0 = initv(N, d, 1);
 
-% initial control
-u0 = ones(N, d);
+% % initial control
+% u0 = ones(N, d);
 
 
 
@@ -108,7 +108,7 @@ for i = 1:N
     plot(sol(:, 2*i-1), sol(:, 2*i));
     hold all
 end
-
+title('evolution');
 
 %% PLOT TRAJECTORIES BFK
 figure
@@ -116,3 +116,23 @@ for i = 1:N
     plot(solBFK(:, 2*i-1), solBFK(:, 2*i));
     hold all
 end
+title('evolution BFK');
+
+
+
+%% PLOT THE CONTROLS
+% d = 1
+figure
+for i = 1:N
+    plot(t(1:end-1), solu(2*i-1, :, 1));
+    hold all
+end
+title('controls d=1');
+% d = 2
+figure
+for i = 1:N
+    plot(t(1:end-1), solu(2*i, :, 1));
+    hold all
+end
+title('controls d=2');
+
