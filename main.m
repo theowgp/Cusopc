@@ -5,7 +5,7 @@ N = 3;
 % dimension
 d = 2;
 % final time
-T = 50;
+T = 10;
 % mesh length
 n = 100;
 % create mesch
@@ -60,10 +60,17 @@ solu0 = zeros(N*d, n,  s);
 %% MINIMIZATION
 eps = 1;% not used 
 sigma = 0.001;
-limitLS = 5;
+limitLS = 10;
 limitA = 10;
 [solx, solu] = NCG(rk, objective, mesh, solu0, eps, sigma, limitLS, limitA);
 
+
+
+
+
+
+sol = solx';
+t = mesh.t;
 
 
 
@@ -109,13 +116,13 @@ limitA = 10;
 %     hold all
 % end
 % 
-% %% Plot the Lyapunov function
-% for k = 1:length(t)
-%     x = reshape(sol(k, 1 : N*d), [d, N])';
-%     v = reshape(sol(k, N*d+1 : 2*N*d), [d, N])';
-%     YV(k) =  B(v, v, N);
-% end
-% 
-%  figure
-%  plot(t, YV);
-%  title('V(t) = 1/2N^2  sumij||vi -vj ||^2');
+%% Plot the Lyapunov function
+for k = 1:length(t)
+    x = reshape(sol(k, 1 : N*d), [d, N])';
+    v = reshape(sol(k, N*d+1 : 2*N*d), [d, N])';
+    YV(k) =  B(v, v, N);
+end
+
+ figure
+ plot(t, YV);
+ title('V(t) = 1/2N^2  sumij||vi -vj ||^2');
