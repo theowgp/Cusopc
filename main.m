@@ -31,7 +31,7 @@ u0 = ones(N, d);
 %% CREATE THE DYNAMICS
 gamma = 1;
 delta = 1;
-R = 40;
+R = 3;
 dynamics = Dynamics(N, d, gamma, delta, R);
 
 
@@ -57,72 +57,62 @@ rk = RungeKutta(A, b, s, dynamics, objective, arg0, 2*N*d+1, Nu, T, n);
 solu0 = zeros(N*d, n,  s);
 
 
-%% MINIMIZATION
+%% NCG MINIMIZATION
 eps = 1;% not used 
 sigma = 0.001;
-limitLS = 10;
+limitLS = 50;
 limitA = 10;
 [solx, solu] = NCG(rk, objective, mesh, solu0, eps, sigma, limitLS, limitA);
-
-
-
-
-
 
 sol = solx';
 t = mesh.t;
 
 
 
-% dynamics.GF(x0, v0, u0)
-% 
-% f = @(t) dynamics.psi(t);
-% fplot(f, [-R, 2*R]);
-% 
-% 
-% %% SOLVE THE SYSTEM
-% % create a solver
-% A = [0 0 0; 0.5 0 0; -1 2 0];
-% b = [1.0/6.0    2.0/3.0    1.0/6.0];
-% c = [0  0.5  1];
-% s = 3;
-% solver = Solver(A, b, c, s, 2*N*d, T, n);
-% 
-% % adjust the initial condition for the solver
-% arg0 = [reshape(x0', [N*d, 1]); reshape(v0', [N*d, 1])];
-% 
-% % adjust the dynamics function for the solver
-% f = @(arg)    reshape(dynamics.f(    reshape(arg(1 : N*d), [d, N])',      reshape(arg(N*d+1 : 2*N*d), [d, N])'   )',        [2*N*d, 1] )';
-% 
-% % solve
-% [t, sol] = solver.rk(arg0, f);
-% 
-% 
-% 
-% % %% DEBUGING
-% %     x0
-% %     v07
-% %     
-% %     arg0
-% %     
-% %     farg0 = f(arg0)
-% % disp('debugging finished');
-% 
-% 
-% 
-% %% PLOT TRAJECTORIES
-% for i = 1:N
-%     plot(sol(:, 2*i-1), sol(:, 2*i));
-%     hold all
-% end
-% 
-%% Plot the Lyapunov function
+%% SOLVE THE BFK PROBLEM FOR COMPARISON
+soluBFK = zeros(N*d, n,  s);
+[solxBFK, solyBFK] = rk.solve_forward_equation(soluBFK);
+solBFK = solxBFK';
+
+
+
+
+%% PLOT THE LYAPUNOV FUNCTION
+figure
 for k = 1:length(t)
     x = reshape(sol(k, 1 : N*d), [d, N])';
     v = reshape(sol(k, N*d+1 : 2*N*d), [d, N])';
     YV(k) =  B(v, v, N);
 end
+plot(t, YV);
+title('V(t) = 1/2N^2  sumij||vi -vj ||^2');
 
- figure
- plot(t, YV);
- title('V(t) = 1/2N^2  sumij||vi -vj ||^2');
+
+%% PLOT THE LYAPUNOV FUNCTION BFK
+hold all
+for k = 1:length(t)
+    x = reshape(solBFK(k, 1 : N*d), [d, N])';
+    v = reshape(solBFK(k, N*d+1 : 2*N*d), [d, N])';
+    YVBFK(k) =  B(v, v, N);
+end
+plot(t, YVBFK);
+%  title('V(t) = 1/2N^2  sumij||vi -vj ||^2');
+
+
+
+
+
+%% PLOT TRAJECTORIES
+figure
+for i = 1:N
+    plot(sol(:, 2*i-1), sol(:, 2*i));
+    hold all
+end
+
+
+%% PLOT TRAJECTORIES BFK
+figure
+for i = 1:N
+    plot(solBFK(:, 2*i-1), solBFK(:, 2*i));
+    hold all
+end
