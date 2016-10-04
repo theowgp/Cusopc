@@ -8,8 +8,6 @@ d = 2;
 T = 50;
 % mesh length
 n = 100;
-% create mesch
-mesh = Mesh(T, n);
 
 
 
@@ -26,15 +24,11 @@ u0 = ones(N, d);
 
 
 
-
-
 %% CREATE THE DYNAMICS
 gamma = 1;
 delta = 1;
-R = 4;
+R = 50;
 dynamics = Dynamics(N, d, gamma, delta, R);
-
-
 
 %% CREATE THE OBJECTIVE
 objective = Objective(N, d);
@@ -53,16 +47,13 @@ arg0 = [reshape(x0', [N*d, 1]); reshape(v0', [N*d, 1]); 0];
 rk = RungeKutta(A, b, s, dynamics, objective, arg0, 2*N*d+1, Nu, T, n);
 
 
-%% INITIAL CONTROL GUESS
+
+
+
 solu0 = zeros(N*d, n,  s);
 
 
-%% MINIMIZATION
-eps = 1;% not used 
-sigma = 0.001;
-limitLS = 5;
-limitA = 10;
-[solx, solu] = NCG(rk, objective, mesh, solu0, eps, sigma, limitLS, limitA);
+
 
 
 
