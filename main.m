@@ -60,7 +60,7 @@ solu0 = zeros(N*d, n,  s);
 eps = 1;% not used 
 sigma = 0.001;
 limitLS = 50;
-limitA = 19;
+limitA = 30;
 [solx, solu] = NCG(rk, objective, mesh, solu0, eps, sigma, limitLS, limitA);
 
 sol = solx';
