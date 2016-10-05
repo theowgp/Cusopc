@@ -1,7 +1,7 @@
 
 %% PARAMETERS:
 % number of agents
-N = 3;
+N = 4;
 % dimension
 d = 2;
 % final time
@@ -18,7 +18,7 @@ mesh = Mesh(T, n);
 x0 = initx(N, d, 3);
 
 % initial velocities
-v0 = initv(N, d, 1);
+v0 = initv(N, d, 0.5);
 
 % % initial control
 % u0 = ones(N, d);
@@ -31,7 +31,7 @@ v0 = initv(N, d, 1);
 %% CREATE THE DYNAMICS
 gamma = 1;
 delta = 1;
-R = 3;
+R = 2;
 dynamics = Dynamics(N, d, gamma, delta, R);
 
 
@@ -60,7 +60,7 @@ solu0 = zeros(N*d, n,  s);
 %% NCG MINIMIZATION
 eps = 1;% not used 
 sigma = 0.001;
-limitLS = 50;
+limitLS = 5;
 limitA = 10;
 [solx, solu] = NCG(rk, objective, mesh, solu0, eps, sigma, limitLS, limitA);
 
@@ -120,19 +120,27 @@ title('evolution BFK');
 
 
 
-%% PLOT THE CONTROLS
+% %% PLOT THE CONTROLS
+% % d = 1
+% figure
+% for i = 1:N
+%     plot(t(1:end-1), solu(2*i-1, :, 1));
+%     hold all
+% end
+% title('controls d=1');
+% % d = 2
+% figure
+% for i = 1:N
+%     plot(t(1:end-1), solu(2*i, :, 1));
+%     hold all
+% end
+% title('controls d=2');
+
+%% PLOT THE NORM CONTROLS
 % d = 1
 figure
 for i = 1:N
-    plot(t(1:end-1), solu(2*i-1, :, 1));
+    plot(t(1:end-1), solu(2*i-1, :, 1).^2 + solu(2*i, :, 1).^2);
     hold all
 end
-title('controls d=1');
-% d = 2
-figure
-for i = 1:N
-    plot(t(1:end-1), solu(2*i, :, 1));
-    hold all
-end
-title('controls d=2');
-
+title(' norm of controls');
