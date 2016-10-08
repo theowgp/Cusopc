@@ -21,7 +21,7 @@ classdef Dynamics
     
     methods
         
-        function obj = Dynamics(N, d, gamma, delta, M, R)
+        function obj = Dynamics(N, d, gamma, delta, R)
             obj.N = N;
             obj.d = d;
             obj.delta = delta;
@@ -105,7 +105,7 @@ classdef Dynamics
         end
         
         function res = da(obj,  r)
-            res = -obj.delta*2*r / (1 + r^2)^(1 + obj.delta);
+            
         end
         
                

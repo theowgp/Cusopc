@@ -30,8 +30,9 @@ v0 = initv(N, d, 0.5);
 %% CREATE THE DYNAMICS
 gamma = 1;
 delta = 1;
+M=1;
 R = 2;
-dynamics = Dynamics(N, d, gamma, delta, R);
+dynamics = Dynamics(N, d, gamma, delta, M, R);
 
 
 
@@ -45,7 +46,7 @@ A = [0 0 0; 0.5 0 0; -1 2 0];
 b = [1.0/6.0    2.0/3.0    1.0/6.0];
 % c = [0  0.5  1];
 s = 3;
-Nu = N*d;
+Nu = N;
 
 arg0 = [reshape(x0', [N*d, 1]); reshape(v0', [N*d, 1]); 0];
 
@@ -53,7 +54,7 @@ rk = RungeKutta(A, b, s, dynamics, objective, arg0, 2*N*d+1, Nu, T, n);
 
 
 %% INITIAL CONTROL GUESS
-solu0 = zeros(N*d, n,  s);
+solu0 = zeros(N, n,  s);
 
 
 %% NCG MINIMIZATION
