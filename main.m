@@ -31,7 +31,7 @@ v0 = initv(N, d, 0.5);
 gamma = 1;
 delta = 1;
 M=1;
-R = 2;
+R = 5;
 dynamics = Dynamics(N, d, gamma, delta, M, R);
 
 
@@ -60,8 +60,8 @@ solu0 = zeros(N, n,  s);
 %% NCG MINIMIZATION
 eps = 1;% not used 
 sigma = 0.001;
-limitLS = 50;
-limitA = 30;
+limitLS = 5;
+limitA = 19;
 [solx, solu] = NCG(rk, objective, mesh, solu0, eps, sigma, limitLS, limitA);
 
 sol = solx';
@@ -70,7 +70,7 @@ t = mesh.t;
 
 
 %% SOLVE THE BFK PROBLEM FOR COMPARISON
-soluBFK = zeros(N*d, n,  s);
+soluBFK = zeros(N, n,  s);
 [solxBFK, solyBFK] = rk.solve_forward_equation(soluBFK);
 solBFK = solxBFK';
 
