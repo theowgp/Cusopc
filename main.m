@@ -6,9 +6,9 @@ N = 4;
 % dimension
 d = 2;
 % final time
-T = 10;
+T = 100;
 % mesh length
-n = 50;
+n = 500;
 % create mesch
 mesh = Mesh(T, n);
 
@@ -31,7 +31,7 @@ v0 = initv(N, d, 0.5);
 gamma = 1;
 delta = 1;
 M = 1;
-R = 5;
+R = 2.2;
 dynamics = Dynamics(N, d, gamma, delta, M, R);
 
 
