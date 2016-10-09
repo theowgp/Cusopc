@@ -30,7 +30,7 @@ v0 = initv(N, d, 0.5);
 %% CREATE THE DYNAMICS
 gamma = 1;
 delta = 1;
-M = 1;
+M = ;
 R = 5;
 dynamics = Dynamics(N, d, gamma, delta, M, R);
 

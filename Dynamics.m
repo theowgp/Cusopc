@@ -13,6 +13,8 @@ classdef Dynamics
        R;
        
        M;
+       
+       cp;
         
     end
     
@@ -30,6 +32,9 @@ classdef Dynamics
             obj.gamma = gamma;
             obj.R = R;
             obj.M = M;
+            
+            %cutoff precision
+            obj.cp = 0.0000001;
         end
         
 
@@ -43,7 +48,6 @@ classdef Dynamics
             
         
         function res = fv(obj, x, v, u)
-%         function res = fv(obj, x, v)
             res = zeros(obj.N, obj.d);
 
             for i=1:obj.N
@@ -51,55 +55,55 @@ classdef Dynamics
                 for j=1:obj.N
                     temp = temp+  obj.a(norm(x(i, :) - x(j, :))) * (v(j, :) - v(i, :));
                 end 
-                temp = temp/obj.N + obj.control(x, v, u, i);
-                res(i, :) = temp;
+                res(i, :) = temp/obj.N + obj.control(x, v, u, i);
             end
         end
         
         function res = control(obj, x, v, u, i)
             temp = u(i)*(obj.amean(x, x, i) - x(i, :)) + (1 - u(i))*(obj.amean(x, v, i) - v(i, :));
-            nfactor = obj.M /norm(temp);
-            res = temp * nfactor;
+            res = obj.M * temp / norm(temp);
         end
         
         function res = amean(obj, x, w, i)
             temp = zeros(1, obj.d);
-            for j=1:obj.N
+            for j = 1:obj.N
                 psiij = obj.cutoff(norm(x(i, :) - x(j, :)));
                 temp = temp+    psiij*w(j, :);
             end
             
             res = temp;
             nfactor = obj.numofn(x, i);
-            if nfactor > 0
-                res = res/nfactor;
-            end
+            res = res/nfactor;
         end
         
         function res = numofn(obj, x, i)
             res = 0;
             for j=1:obj.N
                 psiij = obj.cutoff(norm(x(i, :) - x(j, :)));
- %                 if(psiij ~= 0)
-                if(psiij > 0.00000001)
+%                  if(psiij ~= 0)
+                if(psiij > obj.cp)
                     res = res+  1; 
                 end
             end
-        end
-        
-        % non normilized cutoff function
-        function res = cutoff(obj, r)
-            res = 0;
-            if r < obj.R
-                res = exp(-obj.R^2/(obj.R^2-r^2));
+            if res == 0
+                res = 1;
             end
         end
         
-        % non normilized derivative of the cutoff function
+        % normilized cutoff function
+        function res = cutoff(obj, r)
+            res = 0;
+%             if r < obj.R
+            if r < obj.R - obj.cp
+                res = exp(-obj.R^2/(obj.R^2-r^2))   * exp(1);
+            end
+        end
+        
+        % normilized derivative of the cutoff function
         function res = dcutoff(obj, r)
             res = 0;
             if r < obj.R
-                res = -2 * r * obj.R^2 * exp(-obj.R^2/(obj.R^2-r^2)) / (obj.R^2-r^2)^2;
+                res =(   -2 * r * obj.R^2 * exp(-obj.R^2/(obj.R^2-r^2)) / (obj.R^2-r^2)^2   )* exp(1);
             end
         end
         
@@ -148,10 +152,11 @@ classdef Dynamics
         end
         
         function res = dcontroldx(obj, x, v, u, i, k)
-            res = u(i)*(obj.dameanxdx(x, i, k) - obj.dxdx(i, k)) + (1 - u(i))*obj.dameanvdx(x, v, i, k);
-            temp = u(i)*(obj.amean(x, x, i) - x(i, :)) + (1 - u(i))*(obj.amean(x, v, i) - v(i, :));
-            nfactor = obj.M /norm(temp);
-            res = res * nfactor;
+            temp1 = u(i)*(obj.amean(x, x, i) - x(i, :)) + (1 - u(i))*(obj.amean(x, v, i) - v(i, :));
+            temp2 = u(i)*(obj.dameanxdx(x, i, k) - obj.dxdx(i, k)) + (1 - u(i))*obj.dameanvdx(x, v, i, k);
+            
+            res = temp2/norm(temp1) - temp1'*(temp1 * temp2)/norm(temp1)^3;
+            res = res * obj.M;
         end
         
         function res = dameanxdx(obj, x, i, k)
@@ -205,10 +210,11 @@ classdef Dynamics
         end
         
         function res = dcontroldv(obj, x, v, u, i, k)
-            res = (1 - u(i)) * (obj.dameanvdv(x, v, i, k) - obj.dxdx(i, k));
-            temp = u(i)*(obj.amean(x, x, i) - x(i, :)) + (1 - u(i))*(obj.amean(x, v, i) - v(i, :));
-            nfactor = obj.M /norm(temp);
-            res = res * nfactor;
+            temp1 = u(i)*(obj.amean(x, x, i) - x(i, :)) + (1 - u(i))*(obj.amean(x, v, i) - v(i, :));
+            temp2 = (1 - u(i)) * (obj.dameanvdv(x, v, i, k) - obj.dxdx(i, k));
+            
+            res = temp2/norm(temp1) - temp1'*(temp1 * temp2)/norm(temp1)^3;
+            res = res * obj.M;
         end
         
         
@@ -242,8 +248,8 @@ classdef Dynamics
                 temp1 = u(i)*(obj.amean(x, x, i) - x(i, :)) + (1 - u(i))*(obj.amean(x, v, i) - v(i, :));
                 temp2 = obj.amean(x, x, i) - x(i, :) - obj.amean(x, v, i) + v(i, :);
                                 
-                res = temp2/norm(temp1)^2 - temp1*(temp1*temp2')/norm(temp1)^3;
-                res = res';
+                res = temp2/norm(temp1) - temp1 *(temp1 * temp2')/norm(temp1)^3;
+                res = res' * obj.M;
             end
         end
         
