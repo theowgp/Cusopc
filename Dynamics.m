@@ -60,8 +60,8 @@ classdef Dynamics
         end
         
         function res = control(obj, x, v, u, i)
-            temp = u(i)*(obj.amean(x, x, i) - x(i, :)) + (1 - u(i))*(obj.amean(x, v, i) - v(i, :));
-            res = obj.M * temp / norm(temp);
+            res = u(i)*(obj.amean(x, x, i) - x(i, :)) + (1 - u(i))*(obj.amean(x, v, i) - v(i, :));
+            res = res * obj.M;
         end
         
         function res = amean(obj, x, w, i)
@@ -152,10 +152,7 @@ classdef Dynamics
         end
         
         function res = dcontroldx(obj, x, v, u, i, k)
-            temp1 = u(i)*(obj.amean(x, x, i) - x(i, :)) + (1 - u(i))*(obj.amean(x, v, i) - v(i, :));
-            temp2 = u(i)*(obj.dameanxdx(x, i, k) - obj.dxdx(i, k)) + (1 - u(i))*obj.dameanvdx(x, v, i, k);
-            
-            res = temp2/norm(temp1) - temp1'*(temp1 * temp2)/norm(temp1)^3;
+            res = u(i)*(obj.dameanxdx(x, i, k) - obj.dxdx(i, k)) + (1 - u(i))*obj.dameanvdx(x, v, i, k);
             res = res * obj.M;
         end
         
@@ -210,10 +207,7 @@ classdef Dynamics
         end
         
         function res = dcontroldv(obj, x, v, u, i, k)
-            temp1 = u(i)*(obj.amean(x, x, i) - x(i, :)) + (1 - u(i))*(obj.amean(x, v, i) - v(i, :));
-            temp2 = (1 - u(i)) * (obj.dameanvdv(x, v, i, k) - obj.dxdx(i, k));
-            
-            res = temp2/norm(temp1) - temp1'*(temp1 * temp2)/norm(temp1)^3;
+            res = (1 - u(i)) * (obj.dameanvdv(x, v, i, k) - obj.dxdx(i, k));
             res = res * obj.M;
         end
         
@@ -245,10 +239,7 @@ classdef Dynamics
         function res = dfvdu(obj, x, v, u, i, k)
             res = zeros(obj.d, 1);
             if k == i
-                temp1 = u(i)*(obj.amean(x, x, i) - x(i, :)) + (1 - u(i))*(obj.amean(x, v, i) - v(i, :));
-                temp2 = obj.amean(x, x, i) - x(i, :) - obj.amean(x, v, i) + v(i, :);
-                                
-                res = temp2/norm(temp1) - temp1 *(temp1 * temp2')/norm(temp1)^3;
+                res = obj.amean(x, x, i) - x(i, :) - obj.amean(x, v, i) + v(i, :);
                 res = res' * obj.M;
             end
         end
