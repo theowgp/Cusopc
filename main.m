@@ -2,13 +2,13 @@
 
 %% PARAMETERS:
 % number of agents
-N = 4;
+N = 3;
 % dimension
 d = 2;
 % final time
-T = 100;
+T = 50;
 % mesh length
-n = 500;
+n = 100;
 % create mesch
 mesh = Mesh(T, n);
 
@@ -16,10 +16,10 @@ mesh = Mesh(T, n);
 
 %% INITIAL CONDITIONS
 % initial positions
-x0 = initx(N, d, 3);
+x0 = initx(N, d, 4);
 
 % initial velocities
-v0 = initv(N, d, 0.5);
+v0 = initv(N, d, 1);
 
 
 
@@ -31,7 +31,7 @@ v0 = initv(N, d, 0.5);
 gamma = 1;
 delta = 1;
 M = 1;
-R = 2.2;
+R = 3;
 dynamics = Dynamics(N, d, gamma, delta, M, R);
 
 
@@ -60,12 +60,13 @@ solu0 = zeros(N, n,  s);
 %% NCG MINIMIZATION
 eps = 1;% not used 
 sigma = 0.001;
-limitLS = 2;
-limitA = 19;
+limitLS = 15;
+limitA = 25;
 [solx, solu] = NCG(rk, objective, mesh, solu0, eps, sigma, limitLS, limitA);
 
 sol = solx';
 t = mesh.t;
+
 
 
 
@@ -75,6 +76,14 @@ soluBFK = zeros(N, n,  s);
 solBFK = solxBFK';
 
 
+% %% GET ENDTIME VALUES
+% [xT, vT, zT, uT] = dynamics.convert(solx(:, end), solu(:, end, 1));
+
+%% NORM of the SYSTEM VELOCITY at the end-time
+normv = norm(solx(N*d+1:2*N*d, end))
+
+%% NORM of the BFK SYSTEM VELOCITY at the end-time
+normvBFK = norm(solxBFK(N*d+1:2*N*d, end))
 
 
 %% PLOT THE LYAPUNOV FUNCTION
