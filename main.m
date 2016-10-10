@@ -2,13 +2,13 @@
 
 %% PARAMETERS:
 % number of agents
-N = 3;
+N = 4;
 % dimension
 d = 2;
 % final time
-T = 50;
+T = 100;
 % mesh length
-n = 100;
+n = 200;
 % create mesch
 mesh = Mesh(T, n);
 
@@ -24,20 +24,21 @@ v0 = initv(N, d, 1);
 
 
 
-
-
+%% SET OBJECTIVE PARAMETERS
+alpha1 = 0;
+alpha2 = 1;
+alpha3 = 0;
 
 %% CREATE THE DYNAMICS
 gamma = 1;
 delta = 1;
 M = 1;
 R = 3;
-dynamics = Dynamics(N, d, gamma, delta, M, R);
-
+dynamics = Dynamics(N, d, gamma, delta, alpha1, alpha2, alpha3, M, R);
 
 
 %% CREATE THE OBJECTIVE
-objective = Objective(N, d);
+objective = Objective(N, d, alpha1, alpha2, alpha3);
 
 
 
@@ -60,7 +61,7 @@ solu0 = zeros(N, n,  s);
 %% NCG MINIMIZATION
 eps = 1;% not used 
 sigma = 0.001;
-limitLS = 15;
+limitLS = 10;
 limitA = 25;
 [solx, solu] = NCG(rk, objective, mesh, solu0, eps, sigma, limitLS, limitA);
 
@@ -77,7 +78,7 @@ solBFK = solxBFK';
 
 
 % %% GET ENDTIME VALUES
-% [xT, vT, zT, uT] = dynamics.convert(solx(:, end), solu(:, end, 1));
+[xT, vT, zT, uT] = convert(solx(:, end), solu(:, end, 1), N, d);
 
 %% NORM of the SYSTEM VELOCITY at the end-time
 normv = norm(solx(N*d+1:2*N*d, end))

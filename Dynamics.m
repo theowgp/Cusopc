@@ -8,6 +8,10 @@ classdef Dynamics
        
        delta;
        
+       alpha1;
+       alpha2;
+       alpha3;
+       
        eps;
        
        R;
@@ -25,13 +29,16 @@ classdef Dynamics
     
     methods
         
-        function obj = Dynamics(N, d, gamma, delta, M, R)
+        function obj = Dynamics(N, d, gamma, delta, alpha1, alpha2, alpha3, M, R)
             obj.N = N;
             obj.d = d;
             obj.delta = delta;
             obj.gamma = gamma;
             obj.R = R;
             obj.M = M;
+            obj.alpha1 = alpha1;
+            obj.alpha2 = alpha2;
+            obj.alpha3 = alpha3;
             
             %cutoff precision
 %             obj.cp = 0.0000001;% worse than 0
@@ -116,8 +123,8 @@ classdef Dynamics
                
         
         
-        function res = fz(obj, v)
-            res = B(v, v, obj.N);
+        function res = fz(obj, v, u)
+            res = obj.alpha1*B(v, v, obj.N) +0.5*obj.alpha3*norm(u)^2;
         end
         
         
@@ -242,27 +249,31 @@ classdef Dynamics
             end
         end
         
-        
-        
-        
-        function [x, v, z, u] = convert(obj, argx, argu)
-            x = reshape(argx(1 : obj.N*obj.d), [obj.d, obj.N])';
-            v = reshape(argx(obj.N*obj.d+1 : 2*obj.N*obj.d), [obj.d, obj.N])';
-            z = argx(2*obj.N*obj.d + 1);
-            u = reshape(argu, [1, obj.N])';
+        function res = dfzdu(obj, u)
+            res = obj.alpha3*u';
         end
+        
+        
+        
+        
+%         function [x, v, z, u] = convert(obj, argx, argu)
+%             x = reshape(argx(1 : obj.N*obj.d), [obj.d, obj.N])';
+%             v = reshape(argx(obj.N*obj.d+1 : 2*obj.N*obj.d), [obj.d, obj.N])';
+%             z = argx(2*obj.N*obj.d + 1);
+%             u = reshape(argu, [1, obj.N])';
+%         end
     
         
         
         function res = F(obj, argx, argu)
-            [x, v, z, u] = obj.convert(argx, argu);
+            [x, v, z, u] = convert(argx, argu, obj.N, obj.d);
             
-            res = [reshape(obj.fx(v)', [obj.N*obj.d, 1]);    reshape(obj.fv(x, v, u)', [obj.N*obj.d, 1]);     obj.fz(v)];
+            res = [reshape(obj.fx(v)', [obj.N*obj.d, 1]);    reshape(obj.fv(x, v, u)', [obj.N*obj.d, 1]);     obj.fz(v, u)];
         end
         
         
         function res = GuF(obj, argx, argu)
-            [x, v, z, u] = obj.convert(argx, argu);
+            [x, v, z, u] = convert(argx, argu, obj.N, obj.d);
             
             N = obj.N;
             d = obj.d;
@@ -278,12 +289,14 @@ classdef Dynamics
                 end
             end
             res(N*d+1:2*N*d, 1:N) = temp;
+            
+            res(2*N*d+1, :) = obj.dfzdu(u);
         end
         
         
         
         function res = GxF(obj, argx, argu)
-            [x, v, z, u] = obj.convert(argx, argu);
+            [x, v, z, u] = convert(argx, argu, obj.N, obj.d);
             
             N = obj.N;
             d = obj.d;
@@ -331,13 +344,7 @@ classdef Dynamics
         
         
         function res = dfzdv(obj, v, k)
-            temp = zeros(1, obj.d);
-            
-            for i = 1:obj.N
-                temp = temp+    norm(v(k, :) - v(i, :)) * (v(k, :) - v(i, :));
-            end
-            
-            res = 2*temp/obj.N^2;
+            res = obj.alpha1 * dBdv(v, k, obj.N, obj.d);
         end
         
        

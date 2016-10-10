@@ -31,8 +31,9 @@ v0 = initv(N, d, 1);
 gamma = 1;
 delta = 1;
 M = 1;
-R = 1.1;
-dynamics = Dynamics(N, d, gamma, delta, M, R);
+R = 3;
+alpha3 = 0;
+dynamics = Dynamics(N, d, gamma, delta, alpha1, alpha2, alpha3, M, R);
 
 
 
@@ -60,8 +61,8 @@ solu0 = zeros(N, n,  s);
 %% NCG MINIMIZATION
 eps = 1;% not used 
 sigma = 0.001;
-limitLS = 3;
-limitA = 19;
+limitLS = 10;
+limitA = 25;
 [solx, solu] = NCG(rk, objective, mesh, solu0, eps, sigma, limitLS, limitA);
 
 sol = solx';
@@ -77,10 +78,13 @@ solBFK = solxBFK';
 
 
 % %% GET ENDTIME VALUES
-% [xT, vT, zT, uT] = dynamics.convert(solx(:, end), solu(:, end, 1));
+[xT, vT, zT, uT] = dynamics.convert(solx(:, end), solu(:, end, 1));
 
-%% GET the norm of the system velocity at the end-time
+%% NORM of the SYSTEM VELOCITY at the end-time
 normv = norm(solx(N*d+1:2*N*d, end))
+
+%% NORM of the BFK SYSTEM VELOCITY at the end-time
+normvBFK = norm(solxBFK(N*d+1:2*N*d, end))
 
 
 %% PLOT THE LYAPUNOV FUNCTION

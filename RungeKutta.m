@@ -65,7 +65,7 @@ classdef RungeKutta
         function [solp, solkhi] = solve_adjoint_equation(obj, solu, solx, soly)
             solp = zeros(obj.N, obj.grid.n+1);
 %             solp(:, obj.grid.n+1) = -obj.objective.Gxphi(solx(:, obj.grid.n+1));
-            solp(:, obj.grid.n+1) = -obj.objective.Gxphi();
+            solp(:, obj.grid.n+1) = -obj.objective.Gxphi(solx(:, end));
             solkhi = zeros(obj.N, obj.grid.n, obj.s);
 
             for k=obj.grid.n:-1:1

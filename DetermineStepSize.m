@@ -1,6 +1,6 @@
 function [res, kA] = DetermineStepSize(rk, objective, mesh, solu, g, drct, sigma, limitA)
 
-s = 100;
+s = 10;
 
 [solx, soly] = rk.solve_forward_equation(solu);
 % [solxA, solyA] = rk.solve_forward_equation(solu + s*drct);

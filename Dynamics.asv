@@ -8,6 +8,10 @@ classdef Dynamics
        
        delta;
        
+       alpha1;
+       alpha2;
+       alpha3;
+       
        eps;
        
        R;
@@ -25,13 +29,16 @@ classdef Dynamics
     
     methods
         
-        function obj = Dynamics(N, d, gamma, delta, M, R)
+        function obj = Dynamics(N, d, gamma, delta, alpha1, alpha2, alpha3, M, R)
             obj.N = N;
             obj.d = d;
             obj.delta = delta;
             obj.gamma = gamma;
             obj.R = R;
             obj.M = M;
+            obj.alpha1 = alpha1;
+            obj.alpha2 = alpha2;
+            obj.alpha3 = alpha3;
             
             %cutoff precision
 %             obj.cp = 0.0000001;% worse than 0
@@ -54,9 +61,7 @@ classdef Dynamics
             for i=1:obj.N
                 temp = zeros(1, obj.d);
                 for j=1:obj.N
-                    if j ~= i
-                        temp = temp+  obj.a(norm(x(i, :) - x(j, :))) * (v(j, :) - v(i, :));
-                    end
+                    temp = temp+  obj.a(norm(x(i, :) - x(j, :))) * (v(j, :) - v(i, :));
                 end 
                 res(i, :) = temp/obj.N + obj.control(x, v, u, i);
             end
@@ -88,10 +93,6 @@ classdef Dynamics
                     res = res+  1; 
                 end
             end
-
-            if res == 0
-                res = 1;
-            end
         end
         
         % normilized cutoff function
@@ -122,8 +123,8 @@ classdef Dynamics
                
         
         
-        function res = fz(obj, v)
-            res = B(v, v, obj.N);
+        function res = fz(obj, v, u)
+            res = obj.aplha1*B(v, v, obj.N) +0.5*obj.alpha*norm(u)^2;
         end
         
         
@@ -135,9 +136,7 @@ classdef Dynamics
             temp = zeros(obj.d, obj.d);
             
             for j = 1:obj.N
-                if j ~= i
-                    temp = temp+    (v(j, :) - v(i, :))' * obj.da(norm(x(i, :) - x(j, :))) * obj.dnorm(x, i, j, k);
-                end
+                temp = temp+    (v(j, :) - v(i, :))' * obj.da(norm(x(i, :) - x(j, :))) * obj.dnorm(x, i, j, k);
             end
             temp = temp/obj.N;
             
@@ -165,9 +164,7 @@ classdef Dynamics
         function res = dameanxdx(obj, x, i, k)
             temp = zeros(obj.d);
             for j = 1:obj.N
-                if j ~= i
-                    temp = temp+    x(j, :)'*obj.dcutoff(norm(x(i, :) - x(j, :))) * obj.dnorm(x, i, j, k)   +   obj.cutoff(norm(x(i, :) - x(j, :))) * obj.dxdx(j, k);
-                end
+                temp = temp+    x(j, :)'*obj.dcutoff(norm(x(i, :) - x(j, :))) * obj.dnorm(x, i, j, k)   +   obj.cutoff(norm(x(i, :) - x(j, :))) * obj.dxdx(j, k);
             end
             
             res = temp;
@@ -180,9 +177,7 @@ classdef Dynamics
         function res = dameanvdx(obj, x, v, i, k)
             temp = zeros(obj.d);
             for j = 1:obj.N
-                if j ~= i
-                    temp = temp+    v(j, :)'*obj.dcutoff(norm(x(i, :) - x(j, :))) * obj.dnorm(x, i, j, k);
-                end
+                temp = temp+    v(j, :)'*obj.dcutoff(norm(x(i, :) - x(j, :))) * obj.dnorm(x, i, j, k);
             end
             
             res = temp;
@@ -209,9 +204,7 @@ classdef Dynamics
             temp = zeros(obj.d, obj.d);
             
             for j = 1:obj.N
-                if j ~= i
-                    temp = temp+   obj.a(norm(x(i, :) - x(j, :))) * (obj.dxdx(j, k) - obj.dxdx(i, k));
-                end
+                temp = temp+   obj.a(norm(x(i, :) - x(j, :))) * (obj.dxdx(j, k) - obj.dxdx(i, k));
             end
             temp = temp/obj.N;
             
@@ -227,9 +220,7 @@ classdef Dynamics
         function res = dameanvdv(obj, x, v, i, k)
             temp = zeros(obj.d);
             for j = 1:obj.N
-                if j ~= i
-                    temp = temp+    obj.cutoff(norm(x(i, :) - x(j, :))) * obj.dxdx(j, k);
-                end
+                temp = temp+    obj.cutoff(norm(x(i, :) - x(j, :))) * obj.dxdx(j, k);
             end
             
             res = temp;
@@ -258,6 +249,10 @@ classdef Dynamics
             end
         end
         
+        function res = dfzdu(obj, u)
+            res = obj.alpha*u';
+        end
+        
         
         
         
@@ -273,7 +268,7 @@ classdef Dynamics
         function res = F(obj, argx, argu)
             [x, v, z, u] = obj.convert(argx, argu);
             
-            res = [reshape(obj.fx(v)', [obj.N*obj.d, 1]);    reshape(obj.fv(x, v, u)', [obj.N*obj.d, 1]);     obj.fz(v)];
+            res = [reshape(obj.fx(v)', [obj.N*obj.d, 1]);    reshape(obj.fv(x, v, u)', [obj.N*obj.d, 1]);     obj.fz(v, u)];
         end
         
         
@@ -294,6 +289,8 @@ classdef Dynamics
                 end
             end
             res(N*d+1:2*N*d, 1:N) = temp;
+            
+            res(2*N*d+1, :) = obj.dfzdu(u);
         end
         
         
@@ -347,13 +344,7 @@ classdef Dynamics
         
         
         function res = dfzdv(obj, v, k)
-            temp = zeros(1, obj.d);
-            
-            for i = 1:obj.N
-                temp = temp+    norm(v(k, :) - v(i, :)) * (v(k, :) - v(i, :));
-            end
-            
-            res = 2*temp/obj.N^2;
+            res = obj.alpha1 * dBdv(v, k, obj.N, obj.d);
         end
         
        
