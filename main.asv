@@ -6,9 +6,9 @@ N = 4;
 % dimension
 d = 2;
 % final time
-T = 100;
+T = 50;
 % mesh length
-n = 200;
+n = 100;
 % create mesch
 mesh = Mesh(T, n);
 
@@ -24,21 +24,21 @@ v0 = initv(N, d, 1);
 
 
 
-
-
+%% SET OBJECTIVE PARAMETERS
+alpha1 = 1;
+alpha2 = 0;
+alpha3 = 0;
 
 %% CREATE THE DYNAMICS
 gamma = 1;
 delta = 1;
 M = 1;
 R = 3;
-alpha3 = 0;
 dynamics = Dynamics(N, d, gamma, delta, alpha1, alpha2, alpha3, M, R);
 
 
-
 %% CREATE THE OBJECTIVE
-objective = Objective(N, d);
+objective = Objective(N, d, alpha1, alpha2, alpha3);
 
 
 
@@ -78,7 +78,7 @@ solBFK = solxBFK';
 
 
 % %% GET ENDTIME VALUES
-[xT, vT, zT, uT] = dynamics.convert(solx(:, end), solu(:, end, 1));
+[xT, vT, zT, uT] = convert(solx(:, end), solu(:, end, 1), N, d);
 
 %% NORM of the SYSTEM VELOCITY at the end-time
 normv = norm(solx(N*d+1:2*N*d, end))

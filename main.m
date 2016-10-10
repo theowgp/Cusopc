@@ -2,13 +2,13 @@
 
 %% PARAMETERS:
 % number of agents
-N = 4;
+N = 3;
 % dimension
 d = 2;
 % final time
-T = 100;
+T = 50;
 % mesh length
-n = 200;
+n = 100;
 % create mesch
 mesh = Mesh(T, n);
 

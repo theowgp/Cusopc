@@ -113,7 +113,7 @@ classdef Dynamics
         end
         
         function res = a(obj, r)
-            res = 1/(1 + r^2)^obj.delta;
+            res = 1./(1 + r.^2).^obj.delta;
         end
         
         function res = da(obj,  r)
