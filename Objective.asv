@@ -5,19 +5,15 @@ classdef Objective
         N;
         d
         
-        alpha1;
-        alpha2;
-        alpha3;
+        dynamics;
+                
     end
     
     methods
-        function obj = Objective(N, d, alpha1, alpha2, alpha3)
+        function obj = Objective(N, d, dynamics)
             obj.N = N;
             obj.d = d;
-            
-            obj.alpha1 = alpha1;
-            obj.alpha2 = alpha2;
-            obj.alpha3 = alpha3;
+            obj.dynamics = dynamics;
         end
         
         
@@ -26,21 +22,41 @@ classdef Objective
 %         end
         function res = phi(obj, argx)
             v = reshape(argx(obj.N*obj.d+1 : 2*obj.N*obj.d), [obj.d, obj.N])';
+            x = reshape(argx(1 : obj.N*obj.d), [obj.d, obj.N])';
             z = argx(2*obj.N*obj.d + 1);
+            
             res = z;
-            res = res+  obj.alpha2*B(v, v, obj.N);
+            
+            upperbound = 100;
+            res = res+  E(x, v, obj.N, obj.dynamics, upperbound);  
         end
          
-        function res = Gxphi(obj)
-            res = zeros(2*obj.N*obj.d + 1, 1);
-            res(2*obj.N*obj.d + 1) = 1;
+        function res = Gxphi(obj, argx)
+            v = reshape(argx(obj.N*obj.d+1 : 2*obj.N*obj.d), [obj.d, obj.N])';
+            x = reshape(argx(1 : obj.N*obj.d), [obj.d, obj.N])';
             
+            XT = B(x, x, obj.N);
+            VT = B(v, v, obj.N);
+            
+            res = zeros(2*obj.N*obj.d + 1, 1);
+            
+%             dphidx
             temp = zeros(obj.N*obj.d, 1);
-            for k = 1:N
-                temp((k-1)*d+1:k*d, 1) = dBdv(v, v, obj.N, obj.d) 
+            for k = 1:obj.N
+                temp((k-1)*obj.d+1:k*obj.d, 1) = dBdv(x, k, obj.N, obj.d);  
             end
-            temp = temp*    
-           
+            res(obj.N*obj.d+1:2*obj.N*obj.d, 1) = 0.5 * temp * obj.dynamics.a(sqrt(2*obj.N*XT)) / sqrt(XT);
+            res(1:obj.N*obj.d, 1) = temp;
+            
+%             dphidv
+            temp = zeros(obj.N*obj.d, 1);
+            for k = 1:obj.N
+                temp((k-1)*obj.d+1:k*obj.d, 1) = dBdv(v, k, obj.N, obj.d);  
+            end
+            res(obj.N*obj.d+1:2*obj.N*obj.d, 1) = 0.5 * temp / sqrt(VT);
+            
+%             dphidz
+            res(2*obj.N*obj.d + 1) = 1;
         end
     end
     

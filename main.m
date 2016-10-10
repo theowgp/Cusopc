@@ -2,7 +2,7 @@
 
 %% PARAMETERS:
 % number of agents
-N = 3;
+N = 4;
 % dimension
 d = 2;
 % final time
@@ -26,19 +26,18 @@ v0 = initv(N, d, 1);
 
 %% SET OBJECTIVE PARAMETERS
 alpha1 = 0;
-alpha2 = 1;
 alpha3 = 0;
 
 %% CREATE THE DYNAMICS
 gamma = 1;
 delta = 1;
 M = 1;
-R = 3;
-dynamics = Dynamics(N, d, gamma, delta, alpha1, alpha2, alpha3, M, R);
+R = 2;
+dynamics = Dynamics(N, d, gamma, delta, alpha1, alpha3, M, R);
 
 
 %% CREATE THE OBJECTIVE
-objective = Objective(N, d, alpha1, alpha2, alpha3);
+objective = Objective(N, d, dynamics);
 
 
 
@@ -156,7 +155,7 @@ figure
 for k = 1:length(t)
     x = reshape(sol(k, 1 : N*d), [d, N])';
     v = reshape(sol(k, N*d+1 : 2*N*d), [d, N])';
-    YE(k) =  E(x, v, N, R, dynamics);
+    YE(k) =  E(x, v, N, dynamics, 1000);
 end
 plot(t, YE);
 title('E(t)');

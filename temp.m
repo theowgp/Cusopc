@@ -74,7 +74,7 @@ figure
 for k = 1:length(t)
     x = reshape(sol(k, 1 : N*d), [d, N])';
     v = reshape(sol(k, N*d+1 : 2*N*d), [d, N])';
-    YE(k) =  E(x, v, N, R, dynamics);
+    YE(k) =  E(x, v, N, dynamics, 1000);
 end
 plot(t, YE);
 title('E(t)');
