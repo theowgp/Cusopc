@@ -113,7 +113,8 @@ classdef Dynamics
         end
         
         function res = a(obj, r)
-            res = 1/(1 + r^2)^obj.delta;
+%             res = 1./(1 + r.^2).^obj.delta;
+            res = obj.
         end
         
         function res = da(obj,  r)
@@ -124,7 +125,7 @@ classdef Dynamics
         
         
         function res = fz(obj, v, u)
-            res = obj.aplha1*B(v, v, obj.N) +0.5*obj.alpha*norm(u)^2;
+            res = obj.alpha1*B(v, v, obj.N) +0.5*obj.alpha3*norm(u)^2;
         end
         
         
@@ -250,30 +251,30 @@ classdef Dynamics
         end
         
         function res = dfzdu(obj, u)
-            res = obj.alpha*u';
+            res = obj.alpha3*u';
         end
         
         
         
         
-        function [x, v, z, u] = convert(obj, argx, argu)
-            x = reshape(argx(1 : obj.N*obj.d), [obj.d, obj.N])';
-            v = reshape(argx(obj.N*obj.d+1 : 2*obj.N*obj.d), [obj.d, obj.N])';
-            z = argx(2*obj.N*obj.d + 1);
-            u = reshape(argu, [1, obj.N])';
-        end
+%         function [x, v, z, u] = convert(obj, argx, argu)
+%             x = reshape(argx(1 : obj.N*obj.d), [obj.d, obj.N])';
+%             v = reshape(argx(obj.N*obj.d+1 : 2*obj.N*obj.d), [obj.d, obj.N])';
+%             z = argx(2*obj.N*obj.d + 1);
+%             u = reshape(argu, [1, obj.N])';
+%         end
     
         
         
         function res = F(obj, argx, argu)
-            [x, v, z, u] = obj.convert(argx, argu);
+            [x, v, z, u] = convert(argx, argu, obj.N, obj.d);
             
             res = [reshape(obj.fx(v)', [obj.N*obj.d, 1]);    reshape(obj.fv(x, v, u)', [obj.N*obj.d, 1]);     obj.fz(v, u)];
         end
         
         
         function res = GuF(obj, argx, argu)
-            [x, v, z, u] = obj.convert(argx, argu);
+            [x, v, z, u] = convert(argx, argu, obj.N, obj.d);
             
             N = obj.N;
             d = obj.d;
@@ -296,7 +297,7 @@ classdef Dynamics
         
         
         function res = GxF(obj, argx, argu)
-            [x, v, z, u] = obj.convert(argx, argu);
+            [x, v, z, u] = convert(argx, argu, obj.N, obj.d);
             
             N = obj.N;
             d = obj.d;

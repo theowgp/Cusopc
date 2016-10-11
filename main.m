@@ -25,8 +25,8 @@ v0 = initv(N, d, 1);
 
 
 %% SET OBJECTIVE PARAMETERS
-alpha1 = 0;
-alpha2 = 1;
+alpha1 = 1;
+alpha2 = 0;
 alpha3 = 0;
 
 %% CREATE THE DYNAMICS
@@ -61,7 +61,7 @@ solu0 = zeros(N, n,  s);
 %% NCG MINIMIZATION
 eps = 1;% not used 
 sigma = 0.001;
-limitLS = 10;
+limitLS = 4;
 limitA = 25;
 [solx, solu] = NCG(rk, objective, mesh, solu0, eps, sigma, limitLS, limitA);
 
