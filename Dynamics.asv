@@ -224,9 +224,8 @@ classdef Dynamics
             if norm(temp1) < obj.M
                 res = temp2;
             else
-                res = temp2/norm(temp1) - temp1'*(temp1 * temp2)/norm(temp1)^3;
-                res = res * obj.M;
-            end
+            res = temp2/norm(temp1) - temp1'*(temp1 * temp2)/norm(temp1)^3;
+            res = res * obj.M;
         end
         
         
