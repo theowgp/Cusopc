@@ -8,7 +8,9 @@ classdef Dynamics
        
        delta;
        
-      
+       alpha1;
+       alpha2;
+       alpha3;
        
        eps;
        
@@ -27,14 +29,16 @@ classdef Dynamics
     
     methods
         
-        function obj = Dynamics(N, d, gamma, delta,  M, R)
+        function obj = Dynamics(N, d, gamma, delta, alpha1, alpha2, alpha3, M, R)
             obj.N = N;
             obj.d = d;
             obj.delta = delta;
             obj.gamma = gamma;
             obj.R = R;
             obj.M = M;
-         
+            obj.alpha1 = alpha1;
+            obj.alpha2 = alpha2;
+            obj.alpha3 = alpha3;
             
             %cutoff precision
 %             obj.cp = 0.0000001;% worse than 0
@@ -168,10 +172,10 @@ classdef Dynamics
    
         
         
-        function res = F(obj, argx, u)
-            [x, v] = convert(argx, obj.N, obj.d);
+        function res = F(obj, argx, argu)
+            [x, v, z, u] = convert(argx, argu, obj.N, obj.d);
             
-            res = [reshape(obj.fx(v)', [obj.N*obj.d, 1]);    reshape(obj.fv(x, v, u)', [obj.N*obj.d, 1])];
+            res = [reshape(obj.fx(v)', [obj.N*obj.d, 1]);    reshape(obj.fv(x, v, u)', [obj.N*obj.d, 1]);     obj.fz(v, u)];
         end
         
         

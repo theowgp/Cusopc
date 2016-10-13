@@ -2,13 +2,13 @@
 
 %% PARAMETERS:
 % number of agents
-N = 10;
+N = 3;
 % dimension
 d = 2;
 % final time
-T = 50;
+T = 100;
 % mesh length
-n = 100;
+n = 300;
 % create mesch
 mesh = Mesh(T, n);
 
@@ -16,31 +16,23 @@ mesh = Mesh(T, n);
 
 %% INITIAL CONDITIONS
 % initial positions
-% x0 = initx(N, d, 10);
-x0 = x00; 
+x0 = initx(N, d, 10);
+% x0 = x00; 
 
 % initial velocities
-% v0 = initv(N, d, 2);
-v0 = v00;
+v0 = initv(N, d, 2);
+% v0 = v00;
 
 
 
-
-%% SET OBJECTIVE PARAMETERS
-alpha1 = 1;
-alpha2 = 0;
-alpha3 = 0;
 
 %% CREATE THE DYNAMICS
 gamma = 1;
 delta = 1;
 M = 1;
-R = 4;
-dynamics = Dynamics(N, d, gamma, delta, alpha1, alpha2, alpha3, M, R);
+R = 3;
+dynamics = Dynamics(N, d, gamma, delta, M, R);
 
-
-%% CREATE THE OBJECTIVE
-objective = Objective(N, d, alpha1, alpha2, alpha3);
 
 
 
@@ -49,44 +41,42 @@ A = [0 0 0; 0.5 0 0; -1 2 0];
 b = [1.0/6.0    2.0/3.0    1.0/6.0];
 % c = [0  0.5  1];
 s = 3;
-Nu = N;
+Nu = 1;
 
-arg0 = [reshape(x0', [N*d, 1]); reshape(v0', [N*d, 1]); 0];
+arg0 = [reshape(x0', [N*d, 1]); reshape(v0', [N*d, 1])];
 
-rk = RungeKutta(A, b, s, dynamics, objective, arg0, 2*N*d+1, Nu, T, n);
-
-
-%% INITIAL CONTROL GUESS
-solu0 = zeros(N, n,  s);
+rk = RungeKutta(A, b, s, dynamics, arg0, 2*N*d, Nu, T, n);
 
 
-%% NCG MINIMIZATION
-eps = 1;% not used 
-sigma = 0.001;
-limitLS = 5;
-limitA = 25;
-[solx, solu] = NCG(rk, objective, mesh, solu0, eps, sigma, limitLS, limitA);
 
-sol = solx';
+%% SET THE TIME ARRAY
 t = mesh.t;
+
+
+%% SOLVE THE PROBLEM FOR COMPARISON
+[solx, soly] = rk.solve_forward_equation(1);
+sol = solx';
 
 
 
 
 %% SOLVE THE BFK PROBLEM FOR COMPARISON
-soluBFK = zeros(N, n,  s);
-[solxBFK, solyBFK] = rk.solve_forward_equation(soluBFK);
+[solxBFK, solyBFK] = rk.solve_forward_equation(0);
 solBFK = solxBFK';
 
 
 %% GET ENDTIME VALUES
-[xT, vT, zT, uT] = convert(solx(:, end), solu(:, end, 1), N, d);
+[xT, vT] = convert(solx(:, end), N, d);
+
 
 %% NORM of the SYSTEM VELOCITY at the end-time
 normv = norm(solx(N*d+1:2*N*d, end))
 
+
 %% NORM of the BFK SYSTEM VELOCITY at the end-time
 normvBFK = norm(solxBFK(N*d+1:2*N*d, end))
+
+
 
 
 %% PLOT THE LYAPUNOV FUNCTION
@@ -129,14 +119,6 @@ title('evolution BFK');
 
 
 
-%% PLOT THE CONTROLS
-% d = 1
-figure
-for i = 1:N
-    plot(t(1:end-1), solu(i, :, 1));
-    hold all
-end
-title(' norm of controls');
 
 
 %% PLOT X
