@@ -114,10 +114,12 @@ classdef Dynamics
         
         function res = a(obj, r)
             res = 1./(1 + r.^2).^obj.delta;
+%             res = obj.cutoff(r);
         end
         
         function res = da(obj,  r)
             res = -obj.delta*2*r / (1 + r^2)^(1 + obj.delta);
+%             res = obj.dcutoff(r);
         end
         
                

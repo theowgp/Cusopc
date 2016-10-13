@@ -32,7 +32,10 @@ plot(t, YVBFK);
 
 %% PLOT TRAJECTORIES
 figure
+
 for i = 1:N
+    plot(sol(1, 2*i-1), sol(1, 2*i), 'o');
+    hold all
     plot(sol(:, 2*i-1), sol(:, 2*i));
     hold all
 end
@@ -41,6 +44,8 @@ title('evolution');
 %% PLOT TRAJECTORIES BFK
 figure
 for i = 1:N
+    plot(solBFK(1, 2*i-1), solBFK(1, 2*i), 'o');
+    hold all
     plot(solBFK(:, 2*i-1), solBFK(:, 2*i));
     hold all
 end

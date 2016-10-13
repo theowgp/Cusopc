@@ -2,7 +2,7 @@
 
 %% PARAMETERS:
 % number of agents
-N = 3;
+N = 10;
 % dimension
 d = 2;
 % final time
@@ -16,24 +16,26 @@ mesh = Mesh(T, n);
 
 %% INITIAL CONDITIONS
 % initial positions
-x0 = initx(N, d, 4);
+% x0 = initx(N, d, 10);
+x0 = x00; 
 
 % initial velocities
-v0 = initv(N, d, 1);
+% v0 = initv(N, d, 2);
+v0 = v00;
 
 
 
 
 %% SET OBJECTIVE PARAMETERS
-alpha1 = 0;
-alpha2 = 1;
+alpha1 = 1;
+alpha2 = 0;
 alpha3 = 0;
 
 %% CREATE THE DYNAMICS
 gamma = 1;
 delta = 1;
 M = 1;
-R = 3;
+R = 4;
 dynamics = Dynamics(N, d, gamma, delta, alpha1, alpha2, alpha3, M, R);
 
 
@@ -61,7 +63,7 @@ solu0 = zeros(N, n,  s);
 %% NCG MINIMIZATION
 eps = 1;% not used 
 sigma = 0.001;
-limitLS = 10;
+limitLS = 5;
 limitA = 25;
 [solx, solu] = NCG(rk, objective, mesh, solu0, eps, sigma, limitLS, limitA);
 
@@ -77,7 +79,7 @@ soluBFK = zeros(N, n,  s);
 solBFK = solxBFK';
 
 
-% %% GET ENDTIME VALUES
+%% GET ENDTIME VALUES
 [xT, vT, zT, uT] = convert(solx(:, end), solu(:, end, 1), N, d);
 
 %% NORM of the SYSTEM VELOCITY at the end-time
@@ -96,8 +98,6 @@ for k = 1:length(t)
 end
 plot(t, YV);
 title('V(t) = 1/2N^2  sumij||vi -vj ||^2');
-
-
 %% PLOT THE LYAPUNOV FUNCTION BFK
 hold all
 for k = 1:length(t)
@@ -119,7 +119,6 @@ for i = 1:N
     hold all
 end
 title('evolution');
-
 %% PLOT TRAJECTORIES BFK
 figure
 for i = 1:N
