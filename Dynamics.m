@@ -51,25 +51,34 @@ classdef Dynamics
         
             
         
-        function res = fv(obj, x, v, u)
+        function [res, alpha] = fv(obj, x, v, key)
             res = zeros(obj.N, obj.d);
+            alpha = zeros(obj.N, 1);
 
             for i=1:obj.N
                 temp = zeros(1, obj.d);
                 for j=1:obj.N
                     temp = temp+  obj.a(norm(x(i, :) - x(j, :))) * (v(j, :) - v(i, :));
                 end 
-                if u == 1
-                    res(i, :) = temp/obj.N + obj.control(x, v, i);
+                if key == 1
+%                     my control
+                    alpha(i) = obj.DetermineAlpha(x, v, i);
+                    res(i, :) = temp/obj.N + obj.control(x, v, alpha(i), i);
                 else
-                    res(i, :) = temp/obj.N + obj.M*(obj.amean(x, v, i) - v(i, :));
+                    if key == -1
+%                         position averaging control
+                        res(i, :) = temp/obj.N + obj.M*(obj.amean(x, x, i) - x(i, :));
+                    else
+%                         BFK control
+                        res(i, :) = temp/obj.N + obj.M*(obj.amean(x, v, i) - v(i, :));
+                    end
+                    
                 end
             end
         end
         
-        function res = control(obj, x, v, i)
-            alpha = obj.DetermineAlpha(x, v, i);
-            res = alpha*(obj.amean(x, x, i) - x(i, :)) + (1 - alpha)*(obj.amean(x, v, i) - v(i, :));
+        function res = control(obj, x, v, alphai, i)
+            res = alphai*(obj.amean(x, x, i) - x(i, :)) + (1 - alphai)*(obj.amean(x, v, i) - v(i, :));
             res = res * obj.M;
         end
         
@@ -168,10 +177,10 @@ classdef Dynamics
    
         
         
-        function res = F(obj, argx, u)
+        function [res, alpha] = F(obj, argx, u)
             [x, v] = convert(argx, obj.N, obj.d);
-            
-            res = [reshape(obj.fx(v)', [obj.N*obj.d, 1]);    reshape(obj.fv(x, v, u)', [obj.N*obj.d, 1])];
+            [fv, alpha] = obj.fv(x, v, u);
+            res = [reshape(obj.fx(v)', [obj.N*obj.d, 1]);    reshape(fv', [obj.N*obj.d, 1])];
         end
         
         

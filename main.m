@@ -41,7 +41,7 @@ A = [0 0 0; 0.5 0 0; -1 2 0];
 b = [1.0/6.0    2.0/3.0    1.0/6.0];
 % c = [0  0.5  1];
 s = 3;
-Nu = 1;
+Nu = N;
 
 arg0 = [reshape(x0', [N*d, 1]); reshape(v0', [N*d, 1])];
 
@@ -54,14 +54,13 @@ t = mesh.t;
 
 
 %% SOLVE THE PROBLEM FOR COMPARISON
-[solx, soly] = rk.solve_forward_equation(1);
+[solx, soly, solalpha] = rk.solve_forward_equation(1);
 sol = solx';
 
 
 
-
 %% SOLVE THE BFK PROBLEM FOR COMPARISON
-[solxBFK, solyBFK] = rk.solve_forward_equation(0);
+[solxBFK, solyBFK, solalphaBFK] = rk.solve_forward_equation(0);
 solBFK = solxBFK';
 
 
@@ -120,6 +119,16 @@ title('evolution BFK');
 
 
 
+%% PLOT alphas
+% d = 1
+figure
+for i = 1:N
+    plot(t(1:end-1), solalpha(i, :, 1));
+    hold all
+end
+title('alphas');
+
+
 
 %% PLOT X
 figure
@@ -140,4 +149,12 @@ for k = 1:length(t)
     YE(k) =  E(x, v, N, R, dynamics);
 end
 plot(t, YE);
+%% PLOT E BFK
+hold all
+for k = 1:length(t)
+    x = reshape(solBFK(k, 1 : N*d), [d, N])';
+    v = reshape(solBFK(k, N*d+1 : 2*N*d), [d, N])';
+    YEBFK(k) =  E(x, v, N, R, dynamics);
+end
+plot(t, YEBFK);
 title('E(t)');
