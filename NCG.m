@@ -7,9 +7,16 @@ drct = - g;
 
 kLS = 0;
 while  kLS<limitLS
-    [step, kA] = DetermineStepSize(rk, objective, mesh, solu, g, drct, sigma, limitA);
-    solu = Project(solu, step, drct, objective.N);
+    step = 1;
+    kA = 99999;
+    solu = Project(solu, step, drct);
+%     
+%     [step, kA] = DetermineStepSize(rk, objective, mesh, solu, g, drct, sigma, limitA);
 %     solu = solu + step * drct;
+% 
+%     [step, kA] = DetermineStepSize(rk, objective, mesh, solu, g, drct, sigma, limitA);
+%     solu = Project(solu, step, drct);
+    
     gnext = rk.g_u(solu);
     beta = ComputeBetaK(g, gnext, drct, mesh);
     drct = - gnext + beta*drct;

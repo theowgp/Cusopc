@@ -2,11 +2,11 @@
 
 %% PARAMETERS:
 % number of agents
-N = 10;
+N = 1;
 % dimension
 d = 2;
 % final time
-T = 20;
+T = 10;
 % mesh length
 n = 50;
 % create mesch
@@ -16,12 +16,11 @@ mesh = Mesh(T, n);
 
 %% INITIAL CONDITIONS
 % initial positions
-% x0 = initx(N, d, 10);
-x0 = x00;
+x0 = initx(N, d, 3);
 
 % initial velocities
-% v0 = initv(N, d, 1);
-v0 = v00;
+v0 = initv(N, d, 0.5);
+
 
 
 
@@ -31,7 +30,7 @@ v0 = v00;
 %% CREATE THE DYNAMICS
 gamma = 1;
 delta = 1;
-R = 3;
+R = 2;
 dynamics = Dynamics(N, d, gamma, delta, R);
 
 
@@ -130,30 +129,30 @@ title('evolution BFK');
 
 
 
-%% PLOT THE CONTROLS
-% d = 1
-figure
-for i = 1:N
-    plot(t(1:end-1), solu(2*i-1, :, 1));
-    hold all
-end
-title('controls d=1');
-% d = 2
-figure
-for i = 1:N
-    plot(t(1:end-1), solu(2*i, :, 1));
-    hold all
-end
-title('controls d=2');
-
-% %% PLOT THE NORM CONTROLS
+% %% PLOT THE CONTROLS
 % % d = 1
 % figure
 % for i = 1:N
-%     plot(t(1:end-1), solu(2*i-1, :, 1).^2 + solu(2*i, :, 1).^2);
+%     plot(t(1:end-1), solu(2*i-1, :, 1));
 %     hold all
 % end
-% title(' norm of controls');
+% title('controls d=1');
+% % d = 2
+% figure
+% for i = 1:N
+%     plot(t(1:end-1), solu(2*i, :, 1));
+%     hold all
+% end
+% title('controls d=2');
+
+%% PLOT THE NORM CONTROLS
+% d = 1
+figure
+for i = 1:N
+    plot(t(1:end-1), solu(2*i-1, :, 1).^2 + solu(2*i, :, 1).^2);
+    hold all
+end
+title(' norm of controls');
 
 
 % %% PLOT X
@@ -177,7 +176,7 @@ end
 plot(t, YE);
 title('E(t)');
 %% PLOT E BFK
-hold all
+figure
 for k = 1:length(t)
     x = reshape(solBFK(k, 1 : N*d), [d, N])';
     v = reshape(solBFK(k, N*d+1 : 2*N*d), [d, N])';
