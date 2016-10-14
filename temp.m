@@ -1,17 +1,3 @@
-%% GET ENDTIME VALUES
-[xT, vT] = convert(solx(:, end), N, d);
-
-
-%% NORM of the SYSTEM VELOCITY at the end-time
-normv = norm(solx(N*d+1:2*N*d, end))
-
-
-%% NORM of the BFK SYSTEM VELOCITY at the end-time
-normvBFK = norm(solxBFK(N*d+1:2*N*d, end))
-
-
-
-
 %% PLOT THE LYAPUNOV FUNCTION
 figure
 for k = 1:length(t)
@@ -53,14 +39,6 @@ title('evolution BFK');
 
 
 
-%% PLOT alphas
-% d = 1
-figure
-for i = 1:N
-    plot(t(1:end-1), solalpha(i, :, 1));
-    hold all
-end
-title('alphas');
 
 
 
@@ -83,4 +61,12 @@ for k = 1:length(t)
     YE(k) =  E(x, v, N, R, dynamics);
 end
 plot(t, YE);
+%% PLOT E BFK
+hold all
+for k = 1:length(t)
+    x = reshape(solBFK(k, 1 : N*d), [d, N])';
+    v = reshape(solBFK(k, N*d+1 : 2*N*d), [d, N])';
+    YEBFK(k) =  E(x, v, N, R, dynamics);
+end
+plot(t, YEBFK);
 title('E(t)');
