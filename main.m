@@ -2,13 +2,13 @@
 
 %% PARAMETERS:
 % number of agents
-N = 10;
+N = 4;
 % dimension
 d = 2;
 % final time
-T = 50;
+T = 10;
 % mesh length
-n = 100;
+n = 25;
 % create mesch
 mesh = Mesh(T, n);
 
@@ -16,12 +16,12 @@ mesh = Mesh(T, n);
 
 %% INITIAL CONDITIONS
 % initial positions
-% x0 = initx(N, d, 10);
-x0 = x00; 
+x0 = initx(N, d, N);
+% x0 = x00; 
 
 % initial velocities
-% v0 = initv(N, d, 2);
-v0 = v00;
+v0 = initv(N, d, 1);
+% v0 = v00;
 
 
 
@@ -35,7 +35,7 @@ alpha3 = 0;
 gamma = 1;
 delta = 1;
 M = 1;
-R = 4;
+R = 2;
 dynamics = Dynamics(N, d, gamma, delta, alpha1, alpha2, alpha3, M, R);
 
 
@@ -49,7 +49,7 @@ A = [0 0 0; 0.5 0 0; -1 2 0];
 b = [1.0/6.0    2.0/3.0    1.0/6.0];
 % c = [0  0.5  1];
 s = 3;
-Nu = N;
+Nu = N*d;
 
 arg0 = [reshape(x0', [N*d, 1]); reshape(v0', [N*d, 1]); 0];
 
@@ -57,7 +57,7 @@ rk = RungeKutta(A, b, s, dynamics, objective, arg0, 2*N*d+1, Nu, T, n);
 
 
 %% INITIAL CONTROL GUESS
-solu0 = zeros(N, n,  s);
+solu0 = zeros(N*d, n,  s);
 
 
 %% NCG MINIMIZATION
@@ -74,7 +74,7 @@ t = mesh.t;
 
 
 %% SOLVE THE BFK PROBLEM FOR COMPARISON
-soluBFK = zeros(N, n,  s);
+soluBFK = zeros(N*d, n,  s);
 [solxBFK, solyBFK] = rk.solve_forward_equation(soluBFK);
 solBFK = solxBFK';
 
@@ -114,14 +114,20 @@ plot(t, YVBFK);
 
 %% PLOT TRAJECTORIES
 figure
+
 for i = 1:N
+    plot(sol(1, 2*i-1), sol(1, 2*i), 'o');
+    hold all
     plot(sol(:, 2*i-1), sol(:, 2*i));
     hold all
 end
 title('evolution');
+
 %% PLOT TRAJECTORIES BFK
 figure
 for i = 1:N
+    plot(solBFK(1, 2*i-1), solBFK(1, 2*i), 'o');
+    hold all
     plot(solBFK(:, 2*i-1), solBFK(:, 2*i));
     hold all
 end
@@ -133,10 +139,17 @@ title('evolution BFK');
 % d = 1
 figure
 for i = 1:N
-    plot(t(1:end-1), solu(i, :, 1));
+    plot(t(1:end-1), solu(2*(i-1) + 1, :, 1));
     hold all
 end
-title(' norm of controls');
+title('controls d = 1');
+% d = 1
+figure
+for i = 1:N
+    plot(t(1:end-1), solu(2*i, :, 1));
+    hold all
+end
+title('controls d = 2');
 
 
 %% PLOT X
