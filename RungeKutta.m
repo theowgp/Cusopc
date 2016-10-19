@@ -43,6 +43,10 @@ classdef RungeKutta
             
             
             for k=1:obj.grid.n
+%                 [x, v] = convert(solx(:, k), obj.N/4, 2);
+%                 norm(v)
+%                 Et = E(x, v, obj.N/4)
+                
                 solx(:, k+1) = solx(:, k);
                 for i=1:obj.s
                    soly(:, k, i) = solx(:, k);

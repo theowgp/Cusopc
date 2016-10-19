@@ -24,6 +24,8 @@ plot(t, YVBFK);
 %% PLOT TRAJECTORIES
 figure
 for i = 1:N
+    plot(sol(1, 2*i-1), sol(1, 2*i), 'o');
+    hold all
     plot(sol(:, 2*i-1), sol(:, 2*i));
     hold all
 end
@@ -31,6 +33,8 @@ title('evolution');
 %% PLOT TRAJECTORIES BFK
 figure
 for i = 1:N
+    plot(solBFK(1, 2*i-1), solBFK(1, 2*i), 'o');
+    hold all
     plot(solBFK(:, 2*i-1), solBFK(:, 2*i));
     hold all
 end
@@ -58,7 +62,7 @@ figure
 for k = 1:length(t)
     x = reshape(sol(k, 1 : N*d), [d, N])';
     v = reshape(sol(k, N*d+1 : 2*N*d), [d, N])';
-    YE(k) =  E(x, v, N, R, dynamics);
+    YE(k) =  E(x, v, N);
 end
 plot(t, YE);
 %% PLOT E BFK
@@ -66,7 +70,7 @@ hold all
 for k = 1:length(t)
     x = reshape(solBFK(k, 1 : N*d), [d, N])';
     v = reshape(solBFK(k, N*d+1 : 2*N*d), [d, N])';
-    YEBFK(k) =  E(x, v, N, R, dynamics);
+    YEBFK(k) =  E(x, v, N);
 end
 plot(t, YEBFK);
 title('E(t)');

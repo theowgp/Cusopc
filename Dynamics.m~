@@ -45,8 +45,16 @@ classdef Dynamics
         
         
         
-        function res = fx(obj, v)
-            res = v;
+%         function res = fx(obj, v)
+%             res = v;
+%         end
+        function res = fx(obj, x, v, key)
+            res = zeros(obj.N, obj.d);
+            
+            
+            for i=1:obj.N
+                res(i, :) = v(i, :) + obj.mean(x) - x(i, :);
+            end
         end
         
             
@@ -60,31 +68,47 @@ classdef Dynamics
                 for j=1:obj.N
                     temp = temp+  obj.a(norm(x(i, :) - x(j, :))) * (v(j, :) - v(i, :));
                 end 
-                res(i, :) = temp/obj.N + obj.control(x, v, i);
+%                 res(i, :) = temp/obj.N + obj.control(x, v, i, key);
+                res(i, :) = temp/obj.N;
             end
         end
         
-        function res = control(obj, x, v, i)
+        function res = control(obj, x, v, i, key)
             X = B(x, x, obj.N);
             V = B(v, v, obj.N);
             gamma1 = obj.a(sqrt(2*obj.N*X))/sqrt(X);
             gamma2 = sqrt(V); 
+              
+            if strcmp(key, 'my')
+%                 Et = E(x, v, obj.N);
+%                 
+%                 if( Et >= 0)
+%                     res = (obj.mean(v) - v(i, :) - gamma1*x(i, :))*gamma2;
+%                 else
+%                     res = zeros(1, obj.d);
+%                 end
+
+%                 global
+                res = (obj.mean(v) - v(i, :) - gamma1*x(i, :))*gamma2;
+% 
+%                 local
+%                 res = (obj.amean(x, v, i) - v(i, :) - gamma1*x(i, :))*gamma2;
+% 
+%                 another
+%                 res = (- v(i, :) - gamma1*x(i, :))*gamma2;
+
+            end
             
-%             global
-%             res = (obj.mean(v) - v(i, :) - gamma1*x(i, :))*gamma2;
+            if strcmp(key, 'BFK')
+%                 Et = E(x, v, obj.N)
+                
+%                 global 
+                res = obj.mean(v) - v(i, :);
 
-%             local
-%             res = (obj.amean(x, v, i) - v(i, :) - gamma1*x(i, :))*gamma2;
-            
-%             another
-%             res = (- v(i, :) - gamma1*x(i, :))*gamma2;
+%                 local
+%                 res = obj.amean(x, v, i) - v(i, :);
+            end
 
-%             BFK
-%             res = obj.amean(x, v, i) - v(i, :);
-
-
-             
-            
             res = res * obj.M;
         end
         
@@ -153,7 +177,7 @@ classdef Dynamics
         function res = F(obj, argx, u)
             [x, v] = convert(argx, obj.N, obj.d);
             fv = obj.fv(x, v, u);
-            res = [reshape(obj.fx(v)', [obj.N*obj.d, 1]);    reshape(fv', [obj.N*obj.d, 1])];
+            res = [reshape(obj.fx(x, v)', [obj.N*obj.d, 1]);    reshape(fv', [obj.N*obj.d, 1])];
         end
         
         
