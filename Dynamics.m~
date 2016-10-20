@@ -68,26 +68,33 @@ classdef Dynamics
         
         function res = control(obj, x, v, i, key, ckey)
             if strcmp(key, 'my')
+%                 global
+%                 xhat = obj.mean(x) - x(i, :);
+%                 local
+                xhat = obj.amean(x, x, i) - x(i, :);
+                if norm(xhat) ~= 0 && ckey == 1
+                    vi = v(i, :);
+                    if isnan(vi)
+                        warning('sukabliat');
+                    end
+                    teta = acos(vi * xhat'/(norm(vi)*norm(xhat)));
+                    ei = [v(i, 2), -v(i, 1)];
+
+
+                    res = obj.Eibar(ei, xhat, teta, vi) * obj.Sigma(norm(x(i, :) - xhat)) * obj.Eta(teta);
+                    if isnan(res)
+                        warning('sukabliat');
+                    end
+                else
+                    res = 0;
+                end
+
+
+
 % %                 global
-% %                 xhat = obj.mean(x) - x(i, :);
+% %                 res = obj.mean(x) - x(i, :);
 % %                 local
-%                 xhat = obj.amean(x, x, i) - x(i, :);
-%                 if norm(xhat) ~= 0 && ckey == 1
-%                     vi = v(i, :);
-%                     if isnan(vi)
-%                         warning('sukabliat');
-%                     end
-%                     teta = acos(vi * xhat'/(norm(vi)*norm(xhat)));
-%                     ei = [v(i, 2), -v(i, 1)];
-% 
-% 
-%                     res = obj.Eibar(ei, xhat, teta, vi) * obj.Sigma(norm(x(i, :) - xhat)) * obj.Eta(teta);
-%                     if isnan(res)
-%                         warning('sukabliat');
-%                     end
-%                 else
-%                     res = 0;
-%                 end
+%                 res = obj.amean(x, x, i) - x(i, :);
             end
             
             if strcmp(key, 'BFK')
@@ -215,8 +222,9 @@ classdef Dynamics
         
         
         
-        function res = Sigma(obj, r) 
-            res = r;
+        function res = Sigma(obj, r) % Achtung!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            res = 3*r;
+            
         end
         
         
