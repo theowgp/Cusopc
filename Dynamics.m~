@@ -51,7 +51,7 @@ classdef Dynamics
         
             
         
-        function res = fv(obj, x, v, key)
+        function res = fv(obj, x, v, key, ckey)
             res = zeros(obj.N, obj.d);
             
 
@@ -60,27 +60,43 @@ classdef Dynamics
                 for j=1:obj.N
                     temp = temp+  obj.a(norm(x(i, :) - x(j, :))) * (v(j, :) - v(i, :));
                 end 
-                res(i, :) = temp/obj.N + obj.control(x, v, i);
+                
+%                 disp([i   v(i,:)]);
+                res(i, :) = temp/obj.N + obj.control(x, v, i, key, ckey);
             end
         end
         
-        function res = control(obj, x, v, i)
-            X = B(x, x, obj.N);
-            V = B(v, v, obj.N);
-            gamma1 = obj.a(sqrt(2*obj.N*X))/sqrt(X);
-            gamma2 = sqrt(V); 
+        function res = control(obj, x, v, i, key, ckey)
+            if strcmp(key, 'my')
+% %                 global
+% %                 xhat = obj.mean(x) - x(i, :);
+% %                 local
+%                 xhat = obj.amean(x, x, i) - x(i, :);
+%                 if norm(xhat) ~= 0 && ckey == 1
+%                     vi = v(i, :);
+%                     if isnan(vi)
+%                         warning('sukabliat');
+%                     end
+%                     teta = acos(vi * xhat'/(norm(vi)*norm(xhat)));
+%                     ei = [v(i, 2), -v(i, 1)];
+% 
+% 
+%                     res = obj.Eibar(ei, xhat, teta, vi) * obj.Sigma(norm(x(i, :) - xhat)) * obj.Eta(teta);
+%                     if isnan(res)
+%                         warning('sukabliat');
+%                     end
+%                 else
+%                     res = 0;
+%                 end
+            end
             
-%             global
-%             res = (obj.mean(v) - v(i, :) - gamma1*x(i, :))*gamma2;
+            if strcmp(key, 'BFK')
+%                 global 
+%                 res = obj.mean(v) - v(i, :);
 
-%             local
-%             res = (obj.amean(x, v, i) - v(i, :) - gamma1*x(i, :))*gamma2;
-            
-%             another
-%             res = (- v(i, :) - gamma1*x(i, :))*gamma2;
-
-%             BFK
-%             res = obj.amean(x, v, i) - v(i, :);
+%                 local
+                res = obj.amean(x, v, i) - v(i, :);
+            end
 
 
              
@@ -143,22 +159,92 @@ classdef Dynamics
 
         
         
+               
         
-      
-        
-        
-   
-        
-        
-        function res = F(obj, argx, u)
+        function res = F(obj, argx, u, ckey)
             [x, v] = convert(argx, obj.N, obj.d);
-            fv = obj.fv(x, v, u);
+            fv = obj.fv(x, v, u, ckey);
             res = [reshape(obj.fx(v)', [obj.N*obj.d, 1]);    reshape(fv', [obj.N*obj.d, 1])];
         end
         
         
+        
+        
+        
+        
+        
+        function res = Eibar(obj, ei, xhat, teta, vi)
+            temp = ei * xhat';
+            
+%             teta = acos(vi * xhat'/(norm(vi)*norm(xhat)));
+            phi = obj.Phi(teta);
+            
+            if pi/2 < teta && teta <= pi
+                if temp > 0
+                    res = obj.Rotate(ei, phi, vi);
+                else
+                    if temp < 0
+                        res = obj.Rotate(-ei, phi, vi);
+                    else
+                        res = -vi;
+                    end
+                end
+            else
+                if temp > 0
+                    res = ei;
+                else
+                    if temp < 0
+                        res = -ei;
+                    else
+                        res = -vi;
+                    end
+                end
+            end
+                
+            
+            if norm(res) == 0
+                warning('sukabliat');
+            end
+            res = res/norm(res);
+            if isnan(res)
+                warning('sukabliat');
+            end
+        end
       
         
+        
+        
+        
+        function res = Sigma(obj, r) 
+            res = r;
+        end
+        
+        
+        function res = Eta(obj, teta) 
+            res = (1 - cos(teta))*0.5;
+        end
+        
+        function res = CC(obj, phi)
+            res = [cos(phi)  -sin(phi); sin(phi)  cos(phi)];
+        end
+        
+        function res = Phi(obj, teta)
+            res = 0;
+            if pi/2 < teta && teta <= pi
+                res = teta - pi/2;
+            end
+        end
+        
+        function res = Rotate(obj, ei, phi, vi)
+            temp1 = obj.CC(phi)*ei';
+            temp2 = obj.CC(-phi)*ei';
+            
+            if temp1' * vi' < 0
+                res = temp1';
+            else 
+                res = temp2';
+            end
+        end
        
     
         

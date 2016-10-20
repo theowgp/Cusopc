@@ -16,12 +16,12 @@ mesh = Mesh(T, n);
 
 %% INITIAL CONDITIONS
 % initial positions
-x0 = initx(N, d, N);
-% x0 = x00; 
+% x0 = initx(N, d, N);
+x0 = x00; 
 
 % initial velocities
-v0 = initv(N, d, 2);
-% v0 = v00;
+% v0 = initv(N, d, N);
+v0 = v00;
 
 
 
@@ -30,7 +30,7 @@ v0 = initv(N, d, 2);
 gamma = 1;
 delta = 1;
 M = 1;
-R = 3;
+R = N;
 dynamics = Dynamics(N, d, gamma, delta, M, R);
 
 
@@ -54,13 +54,13 @@ t = mesh.t;
 
 
 %% SOLVE THE PROBLEM FOR COMPARISON
-[solx, soly] = rk.solve_forward_equation('my');
+[solx, soly] = rk.solve_forward_equation('my', 1);
 sol = solx';
 
 
 
 %% SOLVE THE BFK PROBLEM FOR COMPARISON
-[solxBFK, solyBFK] = rk.solve_forward_equation('BFK');
+[solxBFK, solyBFK] = rk.solve_forward_equation('BFK', 0);
 solBFK = solxBFK';
 
 
@@ -104,6 +104,7 @@ temp
 % %% PLOT TRAJECTORIES
 % figure
 % for i = 1:N
+%     plot(sol(1, 2*i-1), sol(1, 2*i), 'o');
 %     plot(sol(:, 2*i-1), sol(:, 2*i));
 %     hold all
 % end
@@ -111,6 +112,7 @@ temp
 % %% PLOT TRAJECTORIES BFK
 % figure
 % for i = 1:N
+%     plot(sol(1, 2*i-1), sol(1, 2*i), 'o');
 %     plot(solBFK(:, 2*i-1), solBFK(:, 2*i));
 %     hold all
 % end

@@ -2,7 +2,7 @@
 
 %% PARAMETERS:
 % number of agents
-N = 3;
+N = 10;
 % dimension
 d = 2;
 % final time
@@ -16,11 +16,11 @@ mesh = Mesh(T, n);
 
 %% INITIAL CONDITIONS
 % initial positions
-x0 = initx(N, d, 10);
+x0 = initx(N, d, N);
 % x0 = x00; 
 
 % initial velocities
-v0 = initv(N, d, 2);
+v0 = initv(N, d, N);
 % v0 = v00;
 
 
@@ -30,7 +30,7 @@ v0 = initv(N, d, 2);
 gamma = 1;
 delta = 1;
 M = 1;
-R = 3;
+R = 1;
 dynamics = Dynamics(N, d, gamma, delta, M, R);
 
 
@@ -54,13 +54,13 @@ t = mesh.t;
 
 
 %% SOLVE THE PROBLEM FOR COMPARISON
-[solx, soly] = rk.solve_forward_equation(1);
+[solx, soly] = rk.solve_forward_equation('my', 1);
 sol = solx';
 
 
 
 %% SOLVE THE BFK PROBLEM FOR COMPARISON
-[solxBFK, solyBFK] = rk.solve_forward_equation(0);
+[solxBFK, solyBFK] = rk.solve_forward_equation('BFK', 0);
 solBFK = solxBFK';
 
 
@@ -77,7 +77,7 @@ normvBFK = norm(solxBFK(N*d+1:2*N*d, end))
 
 
 
-
+temp
 % %% PLOT THE LYAPUNOV FUNCTION
 % figure
 % for k = 1:length(t)
@@ -104,6 +104,7 @@ normvBFK = norm(solxBFK(N*d+1:2*N*d, end))
 % %% PLOT TRAJECTORIES
 % figure
 % for i = 1:N
+%     plot(sol(1, 2*i-1), sol(1, 2*i), 'o');
 %     plot(sol(:, 2*i-1), sol(:, 2*i));
 %     hold all
 % end
@@ -111,6 +112,7 @@ normvBFK = norm(solxBFK(N*d+1:2*N*d, end))
 % %% PLOT TRAJECTORIES BFK
 % figure
 % for i = 1:N
+%     plot(sol(1, 2*i-1), sol(1, 2*i), 'o');
 %     plot(solBFK(:, 2*i-1), solBFK(:, 2*i));
 %     hold all
 % end

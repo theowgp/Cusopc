@@ -16,7 +16,7 @@
 % 
 % end
 
-function res = E(x, v, N, R, dynamics)
+function res = E(x, v, N)
 
 
 V = B(v, v, N);
