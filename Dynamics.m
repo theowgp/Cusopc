@@ -89,13 +89,10 @@ classdef Dynamics
                     res = 0;
                 end
 
-
-
-% %                 global
-% %               res = obj.mean(x) - x(i, :);
-% %                 local
-%                 res = obj.amean(x, x, i) - x(i, :);
             end
+            
+            
+            
             
             if strcmp(key, 'BFK')
 %                 global 
