@@ -2,7 +2,7 @@
 
 %% PARAMETERS:
 % number of agents
-N = 3;
+N = 10;
 % dimension
 d = 2;
 % final time
@@ -16,12 +16,12 @@ mesh = Mesh(T, n);
 
 %% INITIAL CONDITIONS
 % initial positions
-x0 = initx(N, d, N);
-% x0 = x00; 
+% x0 = initx(N, d, N);
+x0 = x00; 
 
 % initial velocities
-v0 = initv(N, d, N);
-% v0 = v00;
+% v0 = initv(N, d, N);
+v0 = v00;
 
 
 
@@ -30,7 +30,7 @@ v0 = initv(N, d, N);
 gamma = 1;
 delta = 1;
 M = 1;
-R = 3;
+R = N;
 dynamics = Dynamics(N, d, gamma, delta, M, R);
 
 

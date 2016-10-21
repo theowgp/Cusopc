@@ -176,18 +176,9 @@ classdef Dynamics
         
         
         
-
-       
-    end 
-    
-    
-    methods(Static)
-        
 %         this function gives a normilized direction in which we should
-%         change the velocity, if 0<=teta<=pi/2 then it is a orthogonal to
-%         velocity vecotr pointing in the similar direction as xhat
-%         otherwise it is simply normilized xhat vector
-          function res = Eibar(vi, xhat, teta)
+%         change the velocity, if 0<=teta<=pi/2 then it is a ort
+          function res = Eibar(obj, vi, xhat, teta)
             ei = [vi(2), -vi(1)];
             temp = ei * xhat';
             
@@ -216,16 +207,21 @@ classdef Dynamics
         
         
 %         force factor depending on the distance between agents
-        function res = Sigma(r) % Achtung!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        function res = Sigma(obj, r) % Achtung!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             res = 10*r;% Achtung!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 %             res = 3*r;% Achtung!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 %             res = r;
         end
         
 %         force factor depending on how different the velocity vector is from the direction in which it shoud be changed
-        function res = Eta(teta) 
+        function res = Eta(obj, teta) 
             res = (1 - cos(teta))*0.5;
         end
+       
+    end 
+    
+    
+    methods(Static)
         
         
     end
