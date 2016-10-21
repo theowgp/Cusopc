@@ -30,7 +30,7 @@ v0 = initv(N, d, N);
 gamma = 1;
 delta = 1;
 M = 1;
-R = N;
+R = 3;
 dynamics = Dynamics(N, d, gamma, delta, M, R);
 
 

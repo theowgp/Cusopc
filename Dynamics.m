@@ -75,15 +75,15 @@ classdef Dynamics
                 if norm(xhat) ~= 0 && ckey == 1
                     vi = v(i, :);
                     if isnan(vi)
-                        warning('sukabliat');
+                        warning('liat');
                     end
                     teta = acos(vi * xhat'/(norm(vi)*norm(xhat)));
                     ei = [v(i, 2), -v(i, 1)];
 
 
-                    res = obj.Eibar(ei, xhat, teta, vi) * obj.Sigma(norm(x(i, :) - xhat)) * obj.Eta(teta);
+                    res = obj.Eibar(ei, xhat, teta, vi) * obj.Sigma(norm(xhat)) * obj.Eta(teta);
                     if isnan(res)
-                        warning('sukabliat');
+                        warning('liat');
                     end
                 else
                     res = 0;
@@ -92,7 +92,7 @@ classdef Dynamics
 
 
 % %                 global
-% %                 res = obj.mean(x) - x(i, :);
+% %               res = obj.mean(x) - x(i, :);
 % %                 local
 %                 res = obj.amean(x, x, i) - x(i, :);
             end
@@ -210,11 +210,11 @@ classdef Dynamics
                 
             
             if norm(res) == 0
-                warning('sukabliat');
+                warning('liat');
             end
             res = res/norm(res);
             if isnan(res)
-                warning('sukabliat');
+                warning('liat');
             end
         end
       
@@ -223,7 +223,8 @@ classdef Dynamics
         
         
         function res = Sigma(obj, r) % Achtung!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            res = 3*r;% Achtung!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            res = 10*r;% Achtung!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%             res = 3*r;% Achtung!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 %             res = r;
         end
         
