@@ -96,8 +96,7 @@ classdef Dynamics
                 else
                     res = zeros(1, obj.d);
                 end
-% %                 magnify a force by a factor
-                res = res * 2;
+                
             end
             
             

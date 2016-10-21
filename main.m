@@ -2,11 +2,11 @@
 
 %% PARAMETERS:
 % number of agents
-N = 10;
+N = 3;
 % dimension
 d = 2;
 % final time
-T = 50;
+T = 100;
 % mesh length
 n = 400;
 % create mesch
@@ -16,12 +16,12 @@ mesh = Mesh(T, n);
 
 %% INITIAL CONDITIONS
 % initial positions
-% x0 = initx(N, d, N);
-x0 = x00; 
+x0 = initx(N, d, N);
+% x0 = x00; 
 
 % initial velocities
-% v0 = initv(N, d, N);
-v0 = v00;
+v0 = initv(N, d, N);
+% v0 = v00;
 
 
 
