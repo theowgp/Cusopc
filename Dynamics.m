@@ -81,7 +81,7 @@ classdef Dynamics
                     
 
 
-                    res = obj.Eibar(vi, xhat, teta) * obj.Sigma(norm(xhat)) * obj.Eta(teta);    
+                    res = obj.Deltav(vi, xhat, teta) * obj.Sigma(norm(xhat)) * obj.Eta(teta);    
                     if isnan(res)
                         warning('liat');
                     end
@@ -174,6 +174,20 @@ classdef Dynamics
         
         
 
+        
+        
+        
+        
+        
+        
+        
+%         force factor depending on the distance between agents
+        function res = Sigma(obj, r) % Achtung!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%             res = 10*r;% Achtung!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            res = 3*r;% Achtung!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%             res = r;
+%               res = obj.a(r);% bad idea!!!!
+        end
        
     end 
     
@@ -184,11 +198,11 @@ classdef Dynamics
 %         change the velocity, if 0<=teta<=pi/2 then it is a orthogonal to
 %         velocity vecotr pointing in the similar direction as xhat
 %         otherwise it is simply normilized xhat vector
-          function res = Eibar(vi, xhat, teta)
+          function res = Deltav(vi, xhat, teta)
             ei = [vi(2), -vi(1)];
             temp = ei * xhat';
             
-                        
+                    
             if pi/2 <= teta && teta <= pi
                 res = xhat;
             else
@@ -203,6 +217,7 @@ classdef Dynamics
             if norm(res) == 0
                 warning('liat');
             end
+%             res = xhat; %  this is the same control as I considered  before but normilized
             res = res/norm(res);
             if isnan(res)
                 warning('liat');
@@ -212,12 +227,7 @@ classdef Dynamics
         
         
         
-%         force factor depending on the distance between agents
-        function res = Sigma(r) % Achtung!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            res = 10*r;% Achtung!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-%             res = 3*r;% Achtung!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-%             res = r;
-        end
+
         
 %         force factor depending on how different the velocity vector is from the direction in which it shoud be changed
         function res = Eta(teta) 

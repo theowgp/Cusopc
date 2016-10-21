@@ -6,9 +6,9 @@ N = 10;
 % dimension
 d = 2;
 % final time
-T = 100;
+T = 50;
 % mesh length
-n = 300;
+n = 400;
 % create mesch
 mesh = Mesh(T, n);
 
