@@ -25,6 +25,7 @@ plot(t, YVBFK);
 figure
 for i = 1:N
     plot(sol(1, 2*i-1), sol(1, 2*i), 'o');
+    hold all
     plot(sol(:, 2*i-1), sol(:, 2*i));
     hold all
 end
@@ -33,6 +34,7 @@ title('evolution');
 figure
 for i = 1:N
     plot(sol(1, 2*i-1), sol(1, 2*i), 'o');
+    hold all
     plot(solBFK(:, 2*i-1), solBFK(:, 2*i));
     hold all
 end

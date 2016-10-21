@@ -84,12 +84,12 @@ classdef Dynamics
                     
                     
                     
-                    res = eibar * cos(phi) *  obj.Sigma(norm(xhat)) * obj.Eta(teta);
-%                     res = eibar * cos(phi) * obj.Sigma(norm(xhat));
+                    res = eibar * cos(phi) * obj.Sigma(norm(xhat)) * obj.Eta(teta);
                     
                     if isnan(res)
                         warning('liat');
                     end
+                    res = res;
                 else
                     res = 0;
                 end
@@ -98,8 +98,7 @@ classdef Dynamics
 
 % %                 global
 % %               res = obj.mean(x) - x(i, :);
-% %                 local    
-                
+% %                 local
 %                 res = obj.amean(x, x, i) - x(i, :);
             end
             
@@ -165,7 +164,7 @@ classdef Dynamics
    
         
         function res = a(obj, r)
-            res = 1/(1 + r^2)^obj.delta;
+            res = 1/(1 + r^2)^obj.delta;phi = teta - pi/2;
 %             res = obj.cutoff(r);
         end
         
@@ -184,16 +183,16 @@ classdef Dynamics
         
         
         
-%         normilized orthogonal to velocity vector pointing to the similar direction of xhat
+         
         function res = Eibar(obj, vi, xhat)
             ei = [vi(2)  -vi(1)];
             temp = ei*xhat';
             
             if temp > 0
-                res = ei/norm(ei);
+                res = ei;
             else
                 if temp < 0
-                    res = -ei/norm(ei);
+                    res = -ei;
                 else
                     res = zeros(size(ei));
                 end
@@ -203,9 +202,9 @@ classdef Dynamics
           
         
         function res = Sigma(obj, r) % Achtung!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            res = 10*r;% Achtung!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+%             res = 10*r;% Achtung!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 %             res = 3*r;% Achtung!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-%             res = r;
+            res = r;
         end
         
         
@@ -213,7 +212,9 @@ classdef Dynamics
             res = (1 - cos(teta))*0.5;
         end
         
-       
+        function res = CC(obj, phi)
+            res = [cos(phi)  -sin(phi); sin(phi)  cos(phi)];
+        end
         
               
     
