@@ -18,6 +18,7 @@ classdef Dynamics
        
        cp;
         
+       force_factor;
     end
     
     
@@ -27,13 +28,14 @@ classdef Dynamics
     
     methods
         
-        function obj = Dynamics(N, d, gamma, delta,  M, R)
+        function obj = Dynamics(N, d, gamma, delta,  M, R, ff)
             obj.N = N;
             obj.d = d;
             obj.delta = delta;
             obj.gamma = gamma;
             obj.R = R;
             obj.M = M;
+            obj.force_factor = ff;
          
             
             %cutoff precision
@@ -72,7 +74,7 @@ classdef Dynamics
 %                 xhat = obj.mean(x) - x(i, :);
 %                 local
                 xhat = obj.amean(x, x, i) - x(i, :);
-                if norm(xhat) ~= 0 && ckey == 1
+                if norm(xhat) ~= 0 %&& ckey == 1
                     vi = v(i, :);
                     
 % %                     calculate angle between xhat and vi
@@ -82,7 +84,7 @@ classdef Dynamics
 %                     teta = acos(vi * xhat'/(norm(vi)*norm(xhat)));
                     
 %                     the direction of the cange of velocity
-                    res = xhat - vi;
+                    res = xhat - vi; 
 
 % %                     if it is nonzero then normilize it
 %                     if norm(res) == 0
@@ -96,8 +98,9 @@ classdef Dynamics
                 else
                     res = zeros(1, obj.d);
                 end
-% %                 magnify a force by a factor
-                res = res * 2;
+%                 magnify a force by a factor
+                res = res * obj.force_factor;
+%                 res = res * 14;
             end
             
             

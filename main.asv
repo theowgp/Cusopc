@@ -55,9 +55,9 @@ rk = RungeKutta(A, b, s, dynamics, arg0, 2*N*d, Nu, T, n);
 t = mesh.t;
 
 
-%% SOLVE THE PROBLEM FOR COMPARISON
-[solx, soly] = rk.solve_forward_equation('my', 1);
-sol = solx';
+% %% SOLVE THE PROBLEM FOR COMPARISON
+% [solx, soly] = rk.solve_forward_equation('my', 1);
+% sol = solx';
 
 
 
