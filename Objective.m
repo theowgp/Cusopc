@@ -39,7 +39,7 @@ classdef Objective
             
             temp = zeros(obj.N*obj.d, 1);
             for k = 1:obj.N
-                temp((k-1)*obj.d+1:k*obj.d, 1) = dBdv(v, k, obj.N, obj.d); 
+                temp((k-1)*obj.d+1:k*obj.d, 1) = dBdw(v, k, obj.N, obj.d); 
             end
             temp = temp*     obj.alpha2;
             

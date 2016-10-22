@@ -8,7 +8,7 @@ d = 2;
 % final time
 T = 50;
 % mesh length
-n = 100;
+n = 800;
 % create mesch
 mesh = Mesh(T, n);
 
@@ -26,7 +26,7 @@ v0 = initv(N, d, 1);
 
 %% SET OBJECTIVE PARAMETERS
 alpha1 = 1;
-alpha2 = 0;
+alpha2 = 1;
 alpha3 = 0;
 
 %% CREATE THE DYNAMICS
@@ -61,7 +61,7 @@ solu0 = zeros(N, n,  s);
 %% NCG MINIMIZATION
 eps = 1;% not used 
 sigma = 0.001;
-limitLS = 4;
+limitLS = 15;
 limitA = 25;
 [solx, solu] = NCG(rk, objective, mesh, solu0, eps, sigma, limitLS, limitA);
 
@@ -72,12 +72,12 @@ t = mesh.t;
 
 
 %% SOLVE THE BFK PROBLEM FOR COMPARISON
-soluBFK = zeros(N, n,  s);
+soluBFK = ones(N, n,  s);
 [solxBFK, solyBFK] = rk.solve_forward_equation(soluBFK);
 solBFK = solxBFK';
 
 
-% %% GET ENDTIME VALUES
+%% GET ENDTIME VALUES
 [xT, vT, zT, uT] = convert(solx(:, end), solu(:, end, 1), N, d);
 
 %% NORM of the SYSTEM VELOCITY at the end-time
