@@ -8,7 +8,7 @@ d = 2;
 % final time
 T = 50;
 % mesh length
-n = 1600;
+n = 3200;
 % create mesch
 mesh = Mesh(T, n);
 
@@ -31,7 +31,8 @@ gamma = 1;
 delta = 1;
 M = 1;
 R = N;
-force_factor = 35;
+% force_factor = 20;
+force_factor = 30;
 dynamics = Dynamics(N, d, gamma, delta, M, R, force_factor);
 
 
@@ -61,15 +62,16 @@ sol = solx';
 
 
 
-% %% TEST
-% h = 1;
-% for step = force_factor:h:50
-%     step
-%     rk.dynamics.force_factor = step;
-%     [solx, soly] = rk.solve_forward_equation('my', 1);
-%     sol = solx';
+%% TEST
+h = 1;
+for step = force_factor:h:100
+    step
+    rk.dynamics.force_factor = step;
+    [solx, soly] = rk.solve_forward_equation('my', 1);
+    sol = solx';
 %     plotX(sol, t, N, d);
-% end
+    plotdX(sol, t, N, d);
+end
 
 
 
@@ -79,17 +81,5 @@ sol = solx';
 solBFK = solxBFK';
 
 
-%% GET ENDTIME VALUES
-[xT, vT] = convert(solx(:, end), N, d);
 
-
-%% NORM of the SYSTEM VELOCITY at the end-time
-normv = norm(solx(N*d+1:2*N*d, end))
-
-
-%% NORM of the BFK SYSTEM VELOCITY at the end-time
-normvBFK = norm(solxBFK(N*d+1:2*N*d, end))
-
-
-
-temp % script
+% OTPUT % script

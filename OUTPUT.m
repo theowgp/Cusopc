@@ -1,3 +1,15 @@
+%% GET ENDTIME VALUES
+[xT, vT] = convert(solx(:, end), N, d);
+
+
+%% NORM of the SYSTEM VELOCITY at the end-time
+normv = norm(solx(N*d+1:2*N*d, end))
+
+
+%% NORM of the BFK SYSTEM VELOCITY at the end-time
+normvBFK = norm(solxBFK(N*d+1:2*N*d, end))
+
+
 %% CALCULATE ENERGIES
 energy_my = control_energy(solx, dynamics, mesh, N, d, 'my')
 energy_BFK = control_energy(solxBFK, dynamics, mesh, N, d, 'BFK')
@@ -11,7 +23,6 @@ for k = 1:length(t)
     YV(k) =  B(v, v, N);
 end
 plot(t, YV);
-title('V(t) = 1/2N^2  sumij||vi -vj ||^2');
 %% PLOT THE LYAPUNOV FUNCTION BFK
 hold all
 for k = 1:length(t)
@@ -20,7 +31,7 @@ for k = 1:length(t)
     YVBFK(k) =  B(v, v, N);
 end
 plot(t, YVBFK);
-%  title('V(t) = 1/2N^2  sumij||vi -vj ||^2');
+title('V(t)');
 
 
 
@@ -60,6 +71,7 @@ title('X(t)');
 
 
 
+
 %% PLOT E
 figure
 for k = 1:length(t)
@@ -79,17 +91,29 @@ plot(t, YEBFK);
 title('E(t)');
 
 
-%% ANIMATED TRAJECTORIES PLOT
-figure
-for i = 1:N
-    h(i) = animatedline;
-end
-axis([ax.XLim ax.YLim]);
-
-for i = 1:N
-    for k = 1:length(t)
-        addpoints(h(i), sol(k, 2*i-1), sol(k, 2*i));
-        drawnow
-    end
-end
-title('animated evolution');
+% %% ANIMATED TRAJECTORIES PLOT
+% figure
+% 
+% % % draw initial conditions
+% % for i = 1:N
+% %     plot(sol(1, 2*i-1), sol(1, 2*i), 'o');
+% %     hold all
+% % end
+% % ax2 = gca;
+% 
+% %create animated lines
+% for i = 1:N
+% %     h(i) = animatedline(ax2, 'Color', 'b');
+%     h(i) = animatedline;
+% end
+% axis([ax.XLim ax.YLim]);
+% 
+% 
+% % start drawing animated lines
+% for k = 1:length(t)
+%     for i = 1:N
+%         addpoints(h(i), sol(k, 2*i-1), sol(k, 2*i));
+%         drawnow
+%     end
+% end
+% title('animated evolution');
