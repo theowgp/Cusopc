@@ -1,3 +1,7 @@
+%% GET ENDTIME VALUES
+[xT, vT, zT, uT] = convert(solx(:, end), solu(:, end, 1), N, d);
+
+
 %% NORM of the SYSTEM VELOCITY at the end-time
 normv = norm(solx(N*d+1:2*N*d, end))
 
@@ -74,7 +78,7 @@ figure
 for k = 1:length(t)
     x = reshape(sol(k, 1 : N*d), [d, N])';
     v = reshape(sol(k, N*d+1 : 2*N*d), [d, N])';
-    YE(k) =  E(x, v, N, R, dynamics);
+    YE(k) =  E(x, v, N);
 end
 plot(t, YE);
 title('E(t)');

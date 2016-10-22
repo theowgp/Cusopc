@@ -1,16 +1,12 @@
-function res = E(x, v, N, R, dynamics)
+function res = E(x, v, N)
 
-res = sqrt(B(v, v, N));
-% res = B(v, v, N);
+V = B(v, v, N);
+X = B(x, x, N);
 
-% f = @(r) dynamics.cutoff(sqrt(2.*N.*r));
-f = @(r) dynamics.a(sqrt(2*N)*r);
+res = sqrt(V);
 
 
-lowerbound = sqrt(B(x, x, N));
-upperbound = 1000;
-% temp = integral(f, lowerbound, upperbound);
-temp = (1/sqrt(2*N)) * (pi/2 - atan(sqrt(2*N*B(x, x, N))));
+temp = (1/sqrt(2*N)) * (pi/2 - atan(sqrt(2*N*X)));
 
 res = res-  temp;
 

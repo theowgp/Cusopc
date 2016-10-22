@@ -9,7 +9,7 @@ classdef Dynamics
        delta;
        
        alpha1;
-       alpha2;
+     
        alpha3;
        
        eps;
@@ -29,7 +29,7 @@ classdef Dynamics
     
     methods
         
-        function obj = Dynamics(N, d, gamma, delta, alpha1, alpha2, alpha3, M, R)
+        function obj = Dynamics(N, d, gamma, delta, alpha1, alpha3, M, R)
             obj.N = N;
             obj.d = d;
             obj.delta = delta;
@@ -37,7 +37,6 @@ classdef Dynamics
             obj.R = R;
             obj.M = M;
             obj.alpha1 = alpha1;
-            obj.alpha2 = alpha2;
             obj.alpha3 = alpha3;
             
             %cutoff precision
