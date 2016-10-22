@@ -87,7 +87,7 @@ classdef Dynamics
                     res = xhat - vi; 
                     
 %                     +the BFK force
-                    res = res+  obj.amean(x, v, i) - vi;
+                    res = res+  
 
 % %                     if it is nonzero then normilize it
 %                     if norm(res) == 0
@@ -101,6 +101,9 @@ classdef Dynamics
                 else
                     res = zeros(1, obj.d);
                 end
+%                 magnify a force by a factor
+                res = res * obj.force_factor;
+%                 res = res * 14;
             end
             
             
@@ -115,8 +118,9 @@ classdef Dynamics
             end
 
 
-%                 magnify a force by a factor
-                res = res * obj.force_factor;
+             
+            
+            res = res * obj.M;
         end
         
         

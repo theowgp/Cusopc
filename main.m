@@ -8,7 +8,7 @@ d = 2;
 % final time
 T = 50;
 % mesh length
-n = 3200;
+n = 400;
 % create mesch
 mesh = Mesh(T, n);
 
@@ -31,8 +31,8 @@ gamma = 1;
 delta = 1;
 M = 1;
 R = N;
-% force_factor = 20;
-force_factor = 30;
+force_factor = 10;
+% force_factor = 30;
 dynamics = Dynamics(N, d, gamma, delta, M, R, force_factor);
 
 
@@ -67,10 +67,10 @@ h = 1;
 for step = force_factor:h:100
     step
     rk.dynamics.force_factor = step;
-    [solx, soly] = rk.solve_forward_equation('my', 1);
+    [solx, soly] = rk.solve_forward_equation('BFK', 1);
     sol = solx';
-%     plotX(sol, t, N, d);
-    plotdX(sol, t, N, d);
+    plotX(sol, t, N, d);
+%     plotdX(sol, t, N, d);
 end
 
 
@@ -82,4 +82,4 @@ solBFK = solxBFK';
 
 
 
-% OTPUT % script
+OUTPUT % script
