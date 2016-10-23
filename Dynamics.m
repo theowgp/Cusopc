@@ -12,6 +12,8 @@ classdef Dynamics
      
        alpha3;
        
+       alpha5;
+       
        eps;
        
        R;
@@ -29,7 +31,7 @@ classdef Dynamics
     
     methods
         
-        function obj = Dynamics(N, d, gamma, delta, alpha1, alpha3, M, R)
+        function obj = Dynamics(N, d, gamma, delta, alpha1, alpha3, alpha5, M, R)
             obj.N = N;
             obj.d = d;
             obj.delta = delta;
@@ -38,6 +40,7 @@ classdef Dynamics
             obj.M = M;
             obj.alpha1 = alpha1;
             obj.alpha3 = alpha3;
+            obj.alpha5 = alpha5;
             
             %cutoff precision
 %             obj.cp = 0.0000001;% worse than 0
@@ -124,8 +127,10 @@ classdef Dynamics
                
         
         
-        function res = fz(obj, v, u)
-            res = obj.alpha1*B(v, v, obj.N) +0.5*obj.alpha3*norm(u)^2;
+        function res = fz(obj, x, v, u)
+            res = obj.alpha1 * B(v, v, obj.N); 
+            res = res+  0.5*obj.alpha3 * norm(u)^2;
+            res = res+  obj.alpha5 * B(x, x, obj.N);
         end
         
         
@@ -258,7 +263,7 @@ classdef Dynamics
         function res = F(obj, argx, argu)
             [x, v, z, u] = convert(argx, argu, obj.N, obj.d);
             
-            res = [reshape(obj.fx(v)', [obj.N*obj.d, 1]);    reshape(obj.fv(x, v, u)', [obj.N*obj.d, 1]);     obj.fz(v, u)];
+            res = [reshape(obj.fx(v)', [obj.N*obj.d, 1]);    reshape(obj.fv(x, v, u)', [obj.N*obj.d, 1]);     obj.fz(x, v, u)];
         end
         
         
@@ -320,6 +325,13 @@ classdef Dynamics
                 temp((k-1)*d+1:k*d) = obj.dfzdv(v, k); 
             end
             res(2*N*d+1, N*d+1:2*N*d) = temp;
+            
+            %dfzdx
+            temp = zeros(1, N*d);
+            for k = 1:N
+                temp((k-1)*d+1:k*d) = obj.dfzdx(x, k); 
+            end
+            res(2*N*d+1, 1:N*d) = temp;
         end
         
         
@@ -335,6 +347,10 @@ classdef Dynamics
         
         function res = dfzdv(obj, v, k)
             res = obj.alpha1 * dBdw(v, k, obj.N, obj.d);
+        end
+        
+        function res = dfzdx(obj, x, k)
+            res = obj.alpha5 * dBdw(x, k, obj.N, obj.d);
         end
         
        

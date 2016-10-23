@@ -2,13 +2,13 @@
 
 %% PARAMETERS:
 % number of agents
-N = 10;
+N = 3;
 % dimension
 d = 2;
 % final time
-T = 20;
+T = 40;
 % mesh length
-n = 200;
+n = 800;
 % create mesch
 mesh = Mesh(T, n);
 
@@ -26,17 +26,18 @@ v0 = initv(N, d, N);
 
 
 %% SET OBJECTIVE PARAMETERS
-alpha1 = 1; % integral of V(t)
-alpha2 = 1; % V(T)
+alpha1 = 0; % integral of V(t)
+alpha2 = 0; % V(T)
 alpha3 = 0; % control
 alpha4 = 0; % E(t)
+alpha5 = 1; % integral of X(t)
 
 %% CREATE THE DYNAMICS
 gamma = 1;
 delta = 1;
 M = 1;
 R = N;
-dynamics = Dynamics(N, d, gamma, delta, alpha1, alpha3, M, R);
+dynamics = Dynamics(N, d, gamma, delta, alpha1, alpha3, alpha5, M, R);
 
 
 %% CREATE THE OBJECTIVE
