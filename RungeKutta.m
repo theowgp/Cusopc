@@ -36,7 +36,7 @@ classdef RungeKutta
         
         
         
-        function [solx, soly] = solve_forward_equation(obj, key, ckey)
+        function [solx, soly] = solve_forward_equation(obj, key)
             solx = zeros(obj.N, obj.grid.n+1);
             solx(:, 1) = obj.arg0;
             soly = zeros(obj.N, obj.grid.n, obj.s);
@@ -48,15 +48,12 @@ classdef RungeKutta
                    soly(:, k, i) = solx(:, k);
                    for j=1:obj.s
                        if i>j
-                           soly(:, k, i) = soly(:, k, i) + obj.grid.h * obj.A(i, j) * obj.dynamics.F(soly(:, k, j), key , ckey);
+                           [obj.dynamics, f] = obj.dynamics.F(soly(:, k, j), key);
+                           soly(:, k, i) = soly(:, k, i) + obj.grid.h * obj.A(i, j) * f;
                        end
                    end
-                   solx(:, k+1) = solx(:, k+1) + obj.grid.h*obj.b(i) * obj.dynamics.F(soly(:, k, i), key, ckey);
-                   [x, v] = convert(solx(:, k+1), obj.N/2/2, 2);
-                   temp = E(x, v, obj.N/2/2);
-                   if temp < 0
-                       ckey = 0;
-                   end
+                   [obj.dynamics, f] = obj.dynamics.F(soly(:, k, i), key);
+                   solx(:, k+1) = solx(:, k+1) + obj.grid.h*obj.b(i) * f;
                 end
             end
         end

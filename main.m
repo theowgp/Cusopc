@@ -6,9 +6,9 @@ N = 3;
 % dimension
 d = 2;
 % final time
-T = 100;
+T = 50;
 % mesh length
-n = 400;
+n = 800;
 % create mesch
 mesh = Mesh(T, n);
 
@@ -26,12 +26,18 @@ v0 = initv(N, d, N);
 
 
 
+%% SET THE INCIDENCY MATRIX
+R = 0.4;
+% hysteresis = 3*R/4;
+hysteresis = 0.3;
+A = set_adjacency_matrix(x0, N, R, hysteresis);
+
+
 %% CREATE THE DYNAMICS
 gamma = 1;
 delta = 1;
 M = 1;
-R = N;
-dynamics = Dynamics(N, d, gamma, delta, M, R);
+dynamics = Dynamics(N, d, gamma, delta,  M, A, R, hysteresis);
 
 
 
@@ -54,26 +60,17 @@ t = mesh.t;
 
 
 %% SOLVE THE PROBLEM FOR COMPARISON
-[solx, soly] = rk.solve_forward_equation('my', 1);
+% [solx, soly] = rk.solve_forward_equation('my');
+[solx, soly] = rk.solve_forward_equation('ZJP');
 sol = solx';
 
 
 
+
 %% SOLVE THE BFK PROBLEM FOR COMPARISON
-[solxBFK, solyBFK] = rk.solve_forward_equation('BFK', 0);
+[solxBFK, solyBFK] = rk.solve_forward_equation('BFK');
 solBFK = solxBFK';
 
-
-%% GET ENDTIME VALUES
-[xT, vT] = convert(solx(:, end), N, d);
-
-
-%% NORM of the SYSTEM VELOCITY at the end-time
-normv = norm(solx(N*d+1:2*N*d, end))
-
-
-%% NORM of the BFK SYSTEM VELOCITY at the end-time
-normvBFK = norm(solxBFK(N*d+1:2*N*d, end))
 
 
 
