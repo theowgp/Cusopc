@@ -9,20 +9,16 @@ d = 2;
 T = 50;
 
 
-%% SET THE RADIUS
-R = N;
-% hysteresis = 3*R/4;
-Rh = 3*R/4;
 
 
 
 %% INITIAL CONDITIONS
 % initial positions
-x0 = initx(N, d, Rh);
+x0 = initx(N, d, N);
 % x0 = x00; 
 
 % initial velocities
-v0 = initv(N, d, Rh);
+v0 = initv(N, d, N);
 % v0 = v00;
 
 
@@ -30,7 +26,9 @@ v0 = initv(N, d, Rh);
 
 %% SET THE INCIDENCY MATRIX
 global A;
-
+R = N;
+% hysteresis = 3*R/4;
+Rh = 3*R/4;
 A = set_adjacency_matrix(x0, N, R);
 
 
