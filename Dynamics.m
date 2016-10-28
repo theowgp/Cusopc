@@ -82,7 +82,34 @@ classdef Dynamics
 %                     teta = acos(vi * xhat'/(norm(vi)*norm(xhat)));
                     
 %                     the direction of the cange of velocity
-                    res = xhat - vi;
+%                     res = xhat - vi;
+%                     
+                    % the potential
+                    temp = 0;
+                    for j = 1:obj.N
+                        if norm(x(i, :) - x(j, :)) < obj.R && i ~= j
+                            temp = temp + V(norm(x(i, :) - x(j, :)), obj.R);
+                        end
+                    end
+
+%                     res =  temp * (obj.amean(x, v, i) - v(i, :)); 
+                    res = temp * (xhat - vi);
+                    
+
+                    
+                    % the  derivative of the potential
+                    temp = 0;
+                    for j = 1:obj.N
+                        if norm(x(i, :) - x(j, :)) < obj.R && i ~= j
+                            temp = temp + dV(norm(x(i, :) - x(j, :)), obj.R) * x(i, :) / norm(x(i, :) - x(j, :));
+                        end
+                    end
+%                     res = zeros(1, obj.d);
+                    res = res - temp - vi;
+                    
+                    
+
+
 
 % %                     if it is nonzero then normilize it
 %                     if norm(res) == 0
@@ -97,7 +124,7 @@ classdef Dynamics
                     res = zeros(1, obj.d);
                 end
 % %                 magnify a force by a factor
-                res = res * 2;
+%                 res = res * 2;
             end
             
             
