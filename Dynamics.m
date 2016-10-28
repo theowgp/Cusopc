@@ -72,6 +72,7 @@ classdef Dynamics
 %                 xhat = obj.mean(x) - x(i, :);
 %                 local
                 xhat = obj.amean(x, x, i) - x(i, :);
+                vhat = obj.amean(x, v, i) - v(i, :);
                 if norm(xhat) ~= 0 && ckey == 1
                     vi = v(i, :);
                     
@@ -85,27 +86,34 @@ classdef Dynamics
 %                     res = xhat - vi;
 %                     
                     % the potential
-                    temp = 0;
+                    temp1 = 0;
                     for j = 1:obj.N
                         if norm(x(i, :) - x(j, :)) < obj.R && i ~= j
-                            temp = temp + V(norm(x(i, :) - x(j, :)), obj.R);
+                            temp1 = temp1 + V(norm(x(i, :) - x(j, :)), obj.R);
                         end
                     end
 
-%                     res =  temp * (obj.amean(x, v, i) - v(i, :)); 
-                    res = temp * (xhat - vi);
+%                     res =  temp1 * (obj.amean(x, v, i) - v(i, :)); 
+%                     res = temp1 * (xhat - vi) ;
                     
-
+%                     res =  obj.amean(x, v, i) - v(i, :); 
+                    res = xhat - vi;
+%                     res = res + obj.amean(x, v, i) - v(i, :);
+                    
+%                     res = zeros(1, obj.d);
                     
                     % the  derivative of the potential
-                    temp = 0;
+                    temp2 = 0;
                     for j = 1:obj.N
                         if norm(x(i, :) - x(j, :)) < obj.R && i ~= j
-                            temp = temp + dV(norm(x(i, :) - x(j, :)), obj.R) * x(i, :) / norm(x(i, :) - x(j, :));
+                            temp2 = temp2 + dV(norm(x(i, :) - x(j, :)), obj.R) * x(i, :) / norm(x(i, :) - x(j, :));
                         end
                     end
-%                     res = zeros(1, obj.d);
-                    res = res - temp - vi;
+                    
+%                     if vhat*xhat' > 0
+%                         res = res - temp2 - vi;
+%                         res = res - temp2;
+%                     end
                     
                     
 

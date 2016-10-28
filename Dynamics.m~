@@ -85,27 +85,31 @@ classdef Dynamics
 %                     res = xhat - vi;
 %                     
                     % the potential
-                    temp = 0;
+                    temp1 = 0;
                     for j = 1:obj.N
                         if norm(x(i, :) - x(j, :)) < obj.R && i ~= j
-                            temp = temp + V(norm(x(i, :) - x(j, :)), obj.R);
+                            temp1 = temp1 + V(norm(x(i, :) - x(j, :)), obj.R);
                         end
                     end
 
-                    res =  obj.amean(x, v, i) - v(i, :); 
-                    res = xhat - vi;
-                    res = res * temp;
-
+%                     res =  temp * (obj.amean(x, v, i) - v(i, :)); 
+                    res = temp1 * (xhat - vi);
+                    
+%                     res = xhat - vi;
+                    
+                    res = zeros(1, obj.d);
                     
                     % the  derivative of the potential
-                    temp = 0;
+                    temp2 = 0;
                     for j = 1:obj.N
                         if norm(x(i, :) - x(j, :)) < obj.R && i ~= j
-                            temp = temp + dV(norm(x(i, :) - x(j, :)), obj.R) * x(i, :) / norm(x(i, :) - x(j, :));
+                            temp2 = temp2 + dV(norm(x(i, :) - x(j, :)), obj.R) * x(i, :) / norm(x(i, :) - x(j, :));
                         end
                     end
-%                     res = zeros(1, obj.d);
-                    res = res - temp - vi;
+                    
+                    if vi*obj.amean(x, v, i) < 0
+                        res = res - temp2 - vi;
+                    end
                     
                     
 
