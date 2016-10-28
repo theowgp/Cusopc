@@ -2,7 +2,7 @@ clear all
 
 %% PARAMETERS:
 % number of agents
-N = 10;
+N = 3;
 % dimension
 d = 2;
 % final time
