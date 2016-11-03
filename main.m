@@ -1,12 +1,11 @@
-clear all
 
 %% PARAMETERS:
 % number of agents
-N = 3;
+N = 4;
 % dimension
 d = 2;
 % final time
-T = 50;
+T = 20;
 
 
 %% SET THE RADIUS
@@ -18,11 +17,11 @@ Rh = 3*R/4;
 
 %% INITIAL CONDITIONS
 % initial positions
-x0 = initx(N, d, Rh);
+x0 = initx(N, d, N);
 % x0 = x00; 
 
 % initial velocities
-v0 = initv(N, d, Rh);
+v0 = initv(N, d, N);
 % v0 = v00;
 
 

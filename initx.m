@@ -1,6 +1,6 @@
 function x = initx(N, d, maxx )
 x = zeros(N, d);
-% 
+
 % % random
 % for i=1:d
 %     t = rand(N, 1);
@@ -22,19 +22,19 @@ x = zeros(N, d);
 %     ];
 
 % also nice
-% x = [
-%     -1 0
-%     0 1
-%     1 0
-%     0 -1
-%     ];
-
-
 x = [
-     -2 0
-      0 0
-      2 0
+    -1 0
+    0 1
+    1 0
+    0 -1
     ];
+
+
+% x = [
+%      -2 0
+%       0 0
+%       2 0
+%     ];
 
 
 end

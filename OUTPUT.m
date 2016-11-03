@@ -6,6 +6,10 @@ vT
 %% NORM of the SYSTEM VELOCITY at the end-time
 normv = norm(sol(end,  N*d+1:2*N*d))
 
+energy = control_energy(t, sol, N, d, R, Rh)
+
+BvT = B(vT, vT, N)
+
 
 
 

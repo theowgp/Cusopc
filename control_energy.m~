@@ -1,0 +1,21 @@
+function res = control_energy(t, sol, N, d, R, Rh)
+
+A = zeros(N);
+
+temp = 0;
+for k =1:length(t)
+    [x, v] = convert(sol(k, :), N, d);
+    A = update_adjacency_matrix(A, x, N, R, Rh);
+    
+    for i = 1:N
+        temp = temp + norm(control(x, i, N, d, R, A))^2;
+    end
+    YE(k) = 
+end
+
+h = (t(end) - t(1)) / length(t);
+
+res = temp * h;
+
+end
+
