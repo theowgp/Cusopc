@@ -6,6 +6,7 @@ for j = 1:N
     if A(i, j)
 %         temp = temp-    dV(norm(x(i, :) - x(j, :)), R) * (x(i, :) - x(j, :)) / norm(x(i, :) - x(j, :));
 
+%         the best !!!!!!!!!!!!!!!
         temp = temp+    2 * V(norm(x(i, :) - x(j, :)), R) * (v(i, :) - v(j, :));
         
 %         rij = norm(x(i, :) - x(j, :));
