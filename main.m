@@ -1,3 +1,4 @@
+clear all
 
 %% PARAMETERS:
 % number of agents
