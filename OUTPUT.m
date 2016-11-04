@@ -1,7 +1,7 @@
 
 %% GET ENDTIME VALUES
 [xT, vT] = convert(sol(end, :), N, d);
-vT
+vT;
 
 %% NORM of the SYSTEM VELOCITY at the end-time
 normv = norm(sol(end,  N*d+1:2*N*d))
@@ -14,7 +14,8 @@ BvT = B(vT, vT, N)
 
 
 %% PLOT THE LYAPUNOV FUNCTION
-figure
+% figure
+k = 1;
 for k = 1:length(t)
 %     x = reshape(sol(k, 1 : N*d), [d, N])';
     v = reshape(sol(k, N*d+1 : 2*N*d), [d, N])';
@@ -22,6 +23,7 @@ for k = 1:length(t)
 end
 plot(t, YV);
 title('V(t)');
+
 
 
 

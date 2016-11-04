@@ -1,7 +1,7 @@
 
 %% PARAMETERS:
 % number of agents
-N = 4;
+N = 3;
 % dimension
 d = 2;
 % final time

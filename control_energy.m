@@ -11,7 +11,7 @@ for k =1:length(t)
     
     temp2 = 0;
     for i = 1:N
-        temp2 = temp2 + norm(control(x, i, N, d, R, A))^2;
+        temp2 = temp2 + norm(control(x, v, i, N, d, R, A))^2;
     end
     temp1 = temp1 + temp2;
     
@@ -22,8 +22,8 @@ h = (t(end) - t(1)) / length(t);
 
 res = temp1 * h;
 
-figure
-plot(t, YE);
-title('control energy');
+% figure
+% plot(t, YE);
+% title('control energy');
 end
 
