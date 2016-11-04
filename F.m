@@ -16,7 +16,6 @@ for i = 1:N
 %             tempv(i, :) = tempv(i, :)-     (v(i, :) - v(j, :));
         end
     end
-%     tempv(i, :) = tempv(i, :)+  control(x, v, i, N, d, R, A) * sigma(x, v, i, R, N, d);
     tempv(i, :) = tempv(i, :)+  control(x, v, i, N, d, R, A);
 end
 

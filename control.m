@@ -7,7 +7,8 @@ for j = 1:N
 %         temp = temp-    dV(norm(x(i, :) - x(j, :)), R) * (x(i, :) - x(j, :)) / norm(x(i, :) - x(j, :));
 
 %         the best !!!!!!!!!!!!!!!
-        temp = temp+    2 * V(norm(x(i, :) - x(j, :)), R) * (v(i, :) - v(j, :));
+%         temp = temp+    2 * V(norm(x(i, :) - x(j, :)), R) * (v(i, :) - v(j, :));
+        temp = temp+    2 * V(norm(x(i, :) - x(j, :)), R) * (v(j, :) - v(i, :));
         
 %         rij = norm(x(i, :) - x(j, :));
 %         if rij >  R/2

@@ -1,11 +1,11 @@
 function x = initx(N, d, maxx )
 x = zeros(N, d);
 
-% % random
-% for i=1:d
-%     t = rand(N, 1);
-%     x(:, i) = t * maxx;
-% end
+% random
+for i=1:d
+    t = rand(N, 1);
+    x(:, i) = t * maxx;
+end
 
 
 % % uniform
